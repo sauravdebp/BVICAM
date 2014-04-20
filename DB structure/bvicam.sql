@@ -3,18 +3,12 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 19, 2014 at 11:48 AM
+-- Generation Time: Apr 20, 2014 at 07:38 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `bvicam`
@@ -90,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `announcement_group_dynamic` (
 
 CREATE TABLE IF NOT EXISTS `announcement_group_static` (
   `GroupId` varchar(4) NOT NULL,
-  `MembRollNo` int(11) NOT NULL,
+  `MembRollNo` bigint(11) NOT NULL,
   `Dirty` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`GroupId`),
   KEY `MembRollNo` (`MembRollNo`)
@@ -173,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `api_developer` (
 --
 
 CREATE TABLE IF NOT EXISTS `api_enduser` (
-  `UserId` int(11) NOT NULL,
+  `UserId` bigint(11) NOT NULL,
   `DeveloperId` varchar(10) NOT NULL,
   `LastAccess` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AccountStatus` tinyint(1) NOT NULL,
@@ -189,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `api_enduser` (
 --
 
 CREATE TABLE IF NOT EXISTS `attendance_accumulated` (
-  `RollNo` int(11) NOT NULL,
+  `RollNo` bigint(11) NOT NULL,
   `SubCode` varchar(10) NOT NULL,
   `PresentCount` int(3) NOT NULL DEFAULT '0',
   `AbsentCount` int(3) NOT NULL DEFAULT '0',
@@ -205,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `attendance_accumulated` (
 --
 
 CREATE TABLE IF NOT EXISTS `attendance_leaves` (
-  `RollNo` int(11) NOT NULL,
+  `RollNo` bigint(11) NOT NULL,
   `SubCode` varchar(10) NOT NULL,
   `LeaveDate` date NOT NULL,
   `LeaveType` int(1) NOT NULL,
@@ -222,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `attendance_leaves` (
 --
 
 CREATE TABLE IF NOT EXISTS `attendance_leave_count` (
-  `RollNo` int(11) NOT NULL,
+  `RollNo` bigint(11) NOT NULL,
   `LeaveType` int(1) NOT NULL,
   `UsedCount` int(2) NOT NULL,
   `Dirty` tinyint(1) NOT NULL DEFAULT '0',
@@ -251,13 +245,13 @@ CREATE TABLE IF NOT EXISTS `attendance_leave_type` (
 --
 
 CREATE TABLE IF NOT EXISTS `master_student` (
-  `RollNo` int(11) NOT NULL,
+  `RollNo` bigint(11) NOT NULL,
   `Batch` year(4) NOT NULL,
   `Semester` int(1) NOT NULL,
   `FirstName` varchar(30) NOT NULL,
   `LastName` varchar(30) NOT NULL,
   `Email` varchar(30) NOT NULL,
-  `PhoneNo` int(12) NOT NULL,
+  `PhoneNo` bigint(12) NOT NULL,
   `Dirty` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`RollNo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -333,22 +327,22 @@ ALTER TABLE `announcement_group_static`
 -- Constraints for table `announcement_map_all_group`
 --
 ALTER TABLE `announcement_map_all_group`
-  ADD CONSTRAINT `announcement_map_all_group_ibfk_2` FOREIGN KEY (`GroupId`) REFERENCES `announcement_group` (`GroupId`),
-  ADD CONSTRAINT `announcement_map_all_group_ibfk_1` FOREIGN KEY (`AnnouncementId`) REFERENCES `announcement_all` (`AnnouncementId`);
+  ADD CONSTRAINT `announcement_map_all_group_ibfk_1` FOREIGN KEY (`AnnouncementId`) REFERENCES `announcement_all` (`AnnouncementId`),
+  ADD CONSTRAINT `announcement_map_all_group_ibfk_2` FOREIGN KEY (`GroupId`) REFERENCES `announcement_group` (`GroupId`);
 
 --
 -- Constraints for table `announcement_map_all_tag`
 --
 ALTER TABLE `announcement_map_all_tag`
-  ADD CONSTRAINT `announcement_map_all_tag_ibfk_2` FOREIGN KEY (`TagId`) REFERENCES `announcement_tag` (`TagId`),
-  ADD CONSTRAINT `announcement_map_all_tag_ibfk_1` FOREIGN KEY (`AnnouncementId`) REFERENCES `announcement_all` (`AnnouncementId`);
+  ADD CONSTRAINT `announcement_map_all_tag_ibfk_1` FOREIGN KEY (`AnnouncementId`) REFERENCES `announcement_all` (`AnnouncementId`),
+  ADD CONSTRAINT `announcement_map_all_tag_ibfk_2` FOREIGN KEY (`TagId`) REFERENCES `announcement_tag` (`TagId`);
 
 --
 -- Constraints for table `announcement_map_tag_group`
 --
 ALTER TABLE `announcement_map_tag_group`
-  ADD CONSTRAINT `announcement_map_tag_group_ibfk_2` FOREIGN KEY (`GroupId`) REFERENCES `announcement_group` (`GroupId`),
-  ADD CONSTRAINT `announcement_map_tag_group_ibfk_1` FOREIGN KEY (`TagId`) REFERENCES `announcement_tag` (`TagId`);
+  ADD CONSTRAINT `announcement_map_tag_group_ibfk_1` FOREIGN KEY (`TagId`) REFERENCES `announcement_tag` (`TagId`),
+  ADD CONSTRAINT `announcement_map_tag_group_ibfk_2` FOREIGN KEY (`GroupId`) REFERENCES `announcement_group` (`GroupId`);
 
 --
 -- Constraints for table `announcement_tag`
@@ -360,30 +354,30 @@ ALTER TABLE `announcement_tag`
 -- Constraints for table `api_enduser`
 --
 ALTER TABLE `api_enduser`
-  ADD CONSTRAINT `api_enduser_ibfk_2` FOREIGN KEY (`DeveloperId`) REFERENCES `api_developer` (`DeveloperId`),
-  ADD CONSTRAINT `api_enduser_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `master_student` (`RollNo`);
+  ADD CONSTRAINT `api_enduser_ibfk_3` FOREIGN KEY (`UserId`) REFERENCES `master_student` (`RollNo`),
+  ADD CONSTRAINT `api_enduser_ibfk_2` FOREIGN KEY (`DeveloperId`) REFERENCES `api_developer` (`DeveloperId`);
 
 --
 -- Constraints for table `attendance_accumulated`
 --
 ALTER TABLE `attendance_accumulated`
-  ADD CONSTRAINT `attendance_accumulated_ibfk_2` FOREIGN KEY (`SubCode`) REFERENCES `master_subject` (`SubCode`),
-  ADD CONSTRAINT `attendance_accumulated_ibfk_1` FOREIGN KEY (`RollNo`) REFERENCES `master_student` (`RollNo`);
+  ADD CONSTRAINT `attendance_accumulated_ibfk_3` FOREIGN KEY (`RollNo`) REFERENCES `master_student` (`RollNo`),
+  ADD CONSTRAINT `attendance_accumulated_ibfk_2` FOREIGN KEY (`SubCode`) REFERENCES `master_subject` (`SubCode`);
 
 --
 -- Constraints for table `attendance_leaves`
 --
 ALTER TABLE `attendance_leaves`
-  ADD CONSTRAINT `attendance_leaves_ibfk_3` FOREIGN KEY (`LeaveType`) REFERENCES `attendance_leave_type` (`LeaveType`),
-  ADD CONSTRAINT `attendance_leaves_ibfk_1` FOREIGN KEY (`RollNo`) REFERENCES `master_student` (`RollNo`),
-  ADD CONSTRAINT `attendance_leaves_ibfk_2` FOREIGN KEY (`SubCode`) REFERENCES `master_subject` (`SubCode`);
+  ADD CONSTRAINT `attendance_leaves_ibfk_4` FOREIGN KEY (`RollNo`) REFERENCES `master_student` (`RollNo`),
+  ADD CONSTRAINT `attendance_leaves_ibfk_2` FOREIGN KEY (`SubCode`) REFERENCES `master_subject` (`SubCode`),
+  ADD CONSTRAINT `attendance_leaves_ibfk_3` FOREIGN KEY (`LeaveType`) REFERENCES `attendance_leave_type` (`LeaveType`);
 
 --
 -- Constraints for table `attendance_leave_count`
 --
 ALTER TABLE `attendance_leave_count`
-  ADD CONSTRAINT `attendance_leave_count_ibfk_2` FOREIGN KEY (`LeaveType`) REFERENCES `attendance_leave_type` (`LeaveType`),
-  ADD CONSTRAINT `attendance_leave_count_ibfk_1` FOREIGN KEY (`RollNo`) REFERENCES `master_student` (`RollNo`);
+  ADD CONSTRAINT `attendance_leave_count_ibfk_3` FOREIGN KEY (`RollNo`) REFERENCES `master_student` (`RollNo`),
+  ADD CONSTRAINT `attendance_leave_count_ibfk_2` FOREIGN KEY (`LeaveType`) REFERENCES `attendance_leave_type` (`LeaveType`);
 
 --
 -- Constraints for table `timetable_permanent`
@@ -396,7 +390,3 @@ ALTER TABLE `timetable_permanent`
 --
 ALTER TABLE `timetable_temporary`
   ADD CONSTRAINT `timetable_temporary_ibfk_1` FOREIGN KEY (`SubCode`) REFERENCES `master_subject` (`SubCode`);
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
