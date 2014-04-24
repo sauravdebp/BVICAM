@@ -19,5 +19,19 @@ if($obj->captureData()){
 <?php
 $obj->buildForm("POST");
 ?>
+<table>
+    <?php
+    $records = $obj->retrieveRecord();
+    $row = "";
+    foreach($records as $record) {
+        $row .= "<tr>";
+        foreach($record as $col=>$val) {
+            $row .= "<td>$val</td>";
+        }
+        $row .= "</tr>";
+    }
+    echo "<table border=1>" . $row . "</table>";
+    ?>
+</table>
 </body>
 </html>

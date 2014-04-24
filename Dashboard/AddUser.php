@@ -3,18 +3,20 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 4/24/14
- * Time: 9:09 PM
+ * Time: 10:17 PM
  */
-require_once("../Models/Announcement/Announcement_Map_All_Group.php");
-
-$obj = new Announcement_Map_All_Group();
-if($obj->captureData()){
-    $obj->insertRecord();
+include_once("../Models/API/Api_EndUser.php");
+$obj = new Api_EndUser();
+if($obj->captureData()) {
+    if(!$obj->insertRecord())
+        echo "Error inserting data";
 }
 ?>
 
 <html>
-<head><title>Map Announcement with Group</title></head>
+<head>
+    <title>Add Developer</title>
+</head>
 <body>
 <?php
 $obj->buildForm("POST");

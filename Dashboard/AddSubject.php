@@ -6,9 +6,9 @@
  * Time: 1:15 AM
  */
 include_once("../Models/Master/Master_Subject.php");
-$subjectObj = new Master_Subject();
-if($subjectObj->captureData()) {
-    if(!$subjectObj->insertRecord())
+$obj = new Master_Subject();
+if($obj->captureData()) {
+    if(!$obj->insertRecord())
         echo "Error inserting data!";
 }
 ?>
@@ -19,7 +19,21 @@ if($subjectObj->captureData()) {
 </head>
 <body>
 <?php
-$subjectObj->buildForm("GET");
+$obj->buildForm("GET");
 ?>
+<table>
+    <?php
+    $records = $obj->retrieveRecord();
+    $row = "";
+    foreach($records as $record) {
+        $row .= "<tr>";
+        foreach($record as $col=>$val) {
+            $row .= "<td>$val</td>";
+        }
+        $row .= "</tr>";
+    }
+    echo "<table border=1>" . $row . "</table>";
+    ?>
+</table>
 </body>
 </html>

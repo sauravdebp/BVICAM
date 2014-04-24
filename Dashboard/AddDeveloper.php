@@ -6,9 +6,9 @@
  * Time: 1:04 PM
  */
 include_once("../Models/API/Api_Developer.php");
-$developerObj = new Api_Developer();
-if($developerObj->captureData()) {
-    if(!$developerObj->insertRecord())
+$obj = new Api_Developer();
+if($obj->captureData()) {
+    if(!$obj->insertRecord())
         echo "Error inserting data";
 }
 ?>
@@ -19,7 +19,21 @@ if($developerObj->captureData()) {
 </head>
 <body>
 <?php
-$developerObj->buildForm("GET");
+$obj->buildForm("POST");
 ?>
+<table>
+    <?php
+    $records = $obj->retrieveRecord();
+    $row = "";
+    foreach($records as $record) {
+        $row .= "<tr>";
+        foreach($record as $col=>$val) {
+            $row .= "<td>$val</td>";
+        }
+        $row .= "</tr>";
+    }
+    echo "<table border=1>" . $row . "</table>";
+    ?>
+</table>
 </body>
 </html>

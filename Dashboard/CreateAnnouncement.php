@@ -9,7 +9,6 @@ require_once ("../Models/Announcement/Announcement_All.php");
 $obj = new Announcement_All();
 if($obj->captureData()) {
     $obj->insertRecord();
-    header('Location: '.dirname(__FILE__));
 }
 else {
     echo "Enter Announcement Details";
@@ -22,5 +21,19 @@ else {
 <?php
 $obj->buildForm("POST");
 ?>
+<table>
+    <?php
+    $records = $obj->retrieveRecord();
+    $row = "";
+    foreach($records as $record) {
+        $row .= "<tr>";
+        foreach($record as $col=>$val) {
+            $row .= "<td>$val</td>";
+        }
+        $row .= "</tr>";
+    }
+    echo "<table border=1>" . $row . "</table>";
+    ?>
+</table>
 </body>
 </html>

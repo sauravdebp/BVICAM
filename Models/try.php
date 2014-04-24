@@ -6,10 +6,6 @@
  * Time: 6:46 PM
  */
 
-//require_once "Announcement/Announcement_All.php";
-
-//$obj = new Announcement_All();
-
 class Announcement {
     public $id;
     public $content;
@@ -50,10 +46,22 @@ function getAllAnnouncements() {
     return $allAnn;
 }
 
-//require_once("Announcement.php");
-$allAnn = new Announcement();
-$allAnn = getAllAnnouncements();
-foreach($allAnn as $ann) {
+require_once ("../Libs/Slim/Slim.php");
+
+\Slim\Slim::registerAutoloader();
+
+$app = new \Slim\Slim();
+
+$app->get('/announcements', function() use($app) {
+    $app->response()->header('Content-Type', 'application/json');
+    $allAnn = new Announcement();
+    $allAnn = getAllAnnouncements();
+    echo json_encode($allAnn);
+});
+
+$app->run();
+
+/*foreach($allAnn as $ann) {
     foreach($ann as $col=>$val){
         if(is_array($val)) {
             echo $col . " => ";
@@ -68,4 +76,4 @@ foreach($allAnn as $ann) {
         }
     }
     echo "<br>";
-}
+}*/

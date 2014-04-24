@@ -31,7 +31,7 @@ abstract class Model {
             }
             $result =  mysqli_query($con, $query);
             if(!$result) {
-                throw new Exception("Failed to fire query: " . mysqli_error($con));
+                throw new Exception("Failed to fire query $query<br>: " . mysqli_error($con));
             }
             mysqli_close($con);
         }
@@ -120,7 +120,7 @@ abstract class Model {
             $obj = new $objectType;
             $options = $obj->retrieveRecord();
             $row = "<tr><td>$col</td>";
-            $row .= "<td><select name=\"".$obj->primaryKey."\">";
+            $row .= "<td><select name=\"".$col."\">";
             foreach($options as $option) {
                 $row.= "<option value=\"".$option[$obj->primaryKey]."\">".
                         (
@@ -152,8 +152,9 @@ abstract class Model {
         else
             return false;
         foreach($this->attribs as $col=>$val) {
-            if(!isset($this->attribFlags[$col]['isfunc']))
+            if(!isset($this->attribFlags[$col]['isfunc'])) {
                 $this->attribs[$col] = $formData[$col];
+            }
         }
         return true;
     }

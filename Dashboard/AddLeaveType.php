@@ -6,9 +6,9 @@
  * Time: 3:48 PM
  */
 include_once("../Models/Attendance/Attendance_Leave_Type.php");
-$attObj = new Attendance_Leave_Type();
-if($attObj->captureData()) {
-    $attObj->insertRecord();
+$obj = new Attendance_Leave_Type();
+if($obj->captureData()) {
+    $obj->insertRecord();
 }
 ?>
 
@@ -18,7 +18,21 @@ if($attObj->captureData()) {
 </head>
 <body>
 <?php
-$attObj->buildForm("GET");
+$obj->buildForm("GET");
 ?>
+<table>
+    <?php
+    $records = $obj->retrieveRecord();
+    $row = "";
+    foreach($records as $record) {
+        $row .= "<tr>";
+        foreach($record as $col=>$val) {
+            $row .= "<td>$val</td>";
+        }
+        $row .= "</tr>";
+    }
+    echo "<table border=1>" . $row . "</table>";
+    ?>
+</table>
 </body>
 </html>

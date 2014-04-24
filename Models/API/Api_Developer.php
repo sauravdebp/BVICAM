@@ -12,6 +12,7 @@ class Api_Developer extends Model{
     public function __construct($developerId=null, $apiKey=null) {
         parent::__construct();
         $this->tablename = "api_developer";
+        $this->primaryKey = "DeveloperId";
         $this->attribs['DeveloperId'] = $developerId;
         $this->attribs['API_Key'] = $apiKey;
     }
