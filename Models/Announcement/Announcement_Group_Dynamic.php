@@ -9,15 +9,14 @@
 include_once(dirname(__FILE__)."/../Model.php");
 
 class Announcement_Group_Dynamic extends Model {
-    public function __construct() {
+    public function __construct($groupId=null, $scriptSrc=null) {
         parent::__construct();
         $this->tablename = "announcement_group_dynamic";
-        $this->attribs['GroupId'] = null;
-        $this->attribs['ScriptSource'] = null;
-    }
-
-    public function setData($groupId, $scriptSrc) {
         $this->attribs['GroupId'] = $groupId;
         $this->attribs['ScriptSource'] = $scriptSrc;
+    }
+
+    public function setData($datas) {
+        parent::setData($datas);
     }
 } 

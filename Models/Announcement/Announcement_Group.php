@@ -9,15 +9,15 @@
 include_once(dirname(__FILE__)."/../Model.php");
 
 class Announcement_Group extends Model{
-    public function __construct() {
+    public function __construct($groupName=null) {
         parent::__construct();
+        $this->primaryKey = "GroupId";
         $this->tablename = "announcement_group";
         $this->attribs['GroupId'] = null;
-        $this->attribs['GroupName'] = null;
+        $this->attribs['GroupName'] = $groupName;
     }
 
-    public function setData($groupId, $groupName) {
-        $this->attribs['GroupId'] = $groupId;
-        $this->attribs['GroupName'] = $groupName;
+    public function setData($datas) {
+        parent::setData($datas);
     }
 }

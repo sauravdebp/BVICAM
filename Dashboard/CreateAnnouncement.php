@@ -2,69 +2,25 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 4/20/14
- * Time: 12:24 AM
+ * Date: 4/24/14
+ * Time: 8:21 PM
  */
-
+require_once ("../Models/Announcement/Announcement_All.php");
+$obj = new Announcement_All();
+if($obj->captureData()) {
+    $obj->insertRecord();
+    header('Location: '.dirname(__FILE__));
+}
+else {
+    echo "Enter Announcement Details";
+}
 ?>
 
 <html>
-<head>
-    <title>Create Announcement</title>
-</head>
+<head><title>Create Announcement</title></head>
 <body>
-<form>
-    <table>
-        <tr>
-            <td>Announcement ID</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td>Category</td>
-            <td>
-                <select>
-                    <?php
-                    include_once("../Models/Announcement/Announcement_Category.php");
-                    $catObj = new Announcement_Category();
-                    $categories = $catObj->retrieveAllRecords();
-                    foreach($categories as $category) {
-                        echo "<option>".$category['CategoryName']."</option>";
-                    }
-                    ?>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Target Groups
-            </td>
-            <td>
-                <ul style="list-style-type: none;">
-                    <?php
-                    include_once("../Models/Announcement/Announcement_Group.php");
-                    $groupObj = new Announcement_Group();
-                    $groups = $groupObj->retrieveAllRecords();
-                    foreach($groups as $group) {
-                        echo "<li><input type=\"checkbox\">".$group['GroupName']."</li>";
-                    }
-                    ?>
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Announcement
-            </td>
-            <td>
-                <textarea></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <input type="submit">
-            </td>
-        </tr>
-    </table>
-</form>
+<?php
+$obj->buildForm("POST");
+?>
 </body>
 </html>

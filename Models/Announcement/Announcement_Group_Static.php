@@ -9,15 +9,14 @@
 include_once(dirname(__FILE__)."/../Model.php");
 
 class Announcement_Group_Static extends Model{
-    public function __construct() {
+    public function __construct($groupId=null, $membRollNo=null) {
         parent::__construct();
         $this->tablename = "announcement_group_static";
-        $this->attribs['GroupId'] = null;
-        $this->attribs['MembRollNo'] = null;
-    }
-
-    public function setData($groupId, $membRollNo) {
         $this->attribs['GroupId'] = $groupId;
         $this->attribs['MembRollNo'] = $membRollNo;
+    }
+
+    public function setData($datas) {
+        parent::setData($datas);
     }
 } 

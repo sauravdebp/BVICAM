@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 4/20/14
- * Time: 12:46 AM
+ * Date: 4/24/14
+ * Time: 9:32 PM
  */
-require_once "../Models/Announcement/Announcement_Group.php";
-$obj = new Announcement_Group();
+require_once "../Models/Announcement/Announcement_Tag.php";
+$obj = new Announcement_Tag();
 if($obj->captureData()) {
     $obj->insertRecord();
 }
@@ -16,7 +16,7 @@ else {
 ?>
 
 <html>
-<head><title>Create Group</title></head>
+<head><title>Create Tag</title></head>
 <body>
 <?php
 $obj->buildForm("POST");

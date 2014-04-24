@@ -6,20 +6,22 @@
  * Time: 10:17 PM
  */
 
-include_once(dirname(__FILE__)."/../Model.php");
+require_once(dirname(__FILE__)."/../Model.php");
+require_once(dirname(__FILE__)."/../Announcement/Announcement_Category.php");
 
 class Announcement_Tag extends Model{
     public function __construct() {
-        parent::__construct();
+        parent::__construct($tagId=null, $categoryId=null);
         $this->tablename = "announcement_tag";
-        $this->attribs['TagId'] = null;
+        $this->primaryKey = "TagId";
+        $this->attribs['TagId'] = $tagId;
         $this->attribs['TagName'] = null;
-        $this->attribs['CategoryId'] = null;
+        $this->attribs['CategoryId'] = $categoryId;
+        $this->attribFlags['CategoryId']['FK'] = new Announcement_Category();
+        $this->attribFlags['CategoryId']['FK_optionAttr'] = "CategoryName";
     }
 
-    public function setData($tagId, $tagName, $categoryId) {
-        $this->attribs['TagId'] = $tagId;
-        $this->attribs['TagName'] = $tagName;
-        $this->attribs['CategoryId'] = $categoryId;
+    public function setData($datas) {
+        parent::setData($datas);
     }
 } 

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source source="LOCAL" name="MySQL - bvicam@localhost" uuid="a638cd11-764e-47a5-be75-a4212a92e370">
+    <database-info product="MySQL" version="5.6.12-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.29 ( Revision: alexander.soklakov@oracle.com-20140120140810-s44574olh90i6i4l )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <schema name="" catalog="bvicam"/>
+    <table name="announcement_all" schema="" catalog="bvicam" type="TABLE">
+      <column name="AnnouncementId" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Content" sqlType="VARCHAR" length="100" precision="0" nullable="false" jdbcType="12" def="J05vIEFubm91bmNlbWVudCBDb250ZW50Jw=="/>
+      <column name="Date" sqlType="DATE" length="10" precision="0" nullable="false" jdbcType="91"/>
+      <column name="Time" sqlType="TIME" length="8" precision="0" nullable="false" jdbcType="92"/>
+      <column name="CategoryId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="AnnouncementId"/>
+      <foreign-key name="announcement_all_ibfk_1" columns="CategoryId" ref-table="announcement_category" ref-schema="" ref-catalog="bvicam" ref-columns="CategoryId" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="announcement_map_all_group_ibfk_1" table="announcement_map_all_group" schema="" catalog="bvicam" columns="AnnouncementId"/>
+      <exported-key name="announcement_map_all_tag_ibfk_1" table="announcement_map_all_tag" schema="" catalog="bvicam" columns="AnnouncementId"/>
+      <index name="AnnouncementId" unique="false" columns="AnnouncementId"/>
+      <index name="AnnouncementId_2" unique="false" columns="AnnouncementId"/>
+      <index name="CategoryId_2" unique="false" columns="CategoryId"/>
+      <index name="CategoryId_3" unique="false" columns="CategoryId"/>
+    </table>
+    <table name="announcement_category" schema="" catalog="bvicam" type="TABLE">
+      <column name="CategoryId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="CategoryName" sqlType="VARCHAR" length="20" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="CategoryId"/>
+      <exported-key name="announcement_all_ibfk_1" table="announcement_all" schema="" catalog="bvicam" columns="CategoryId"/>
+      <exported-key name="announcement_tag_ibfk_1" table="announcement_tag" schema="" catalog="bvicam" columns="CategoryId"/>
+    </table>
+    <table name="announcement_group" schema="" catalog="bvicam" type="TABLE">
+      <column name="GroupId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="GroupName" sqlType="VARCHAR" length="20" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="GroupId"/>
+      <exported-key name="announcement_group_dynamic_ibfk_1" table="announcement_group_dynamic" schema="" catalog="bvicam" columns="GroupId"/>
+      <exported-key name="announcement_group_static_ibfk_1" table="announcement_group_static" schema="" catalog="bvicam" columns="GroupId"/>
+      <exported-key name="announcement_map_all_group_ibfk_2" table="announcement_map_all_group" schema="" catalog="bvicam" columns="GroupId"/>
+      <exported-key name="announcement_map_tag_group_ibfk_2" table="announcement_map_tag_group" schema="" catalog="bvicam" columns="GroupId"/>
+    </table>
+    <table name="announcement_group_dynamic" schema="" catalog="bvicam" type="TABLE">
+      <column name="GroupId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="ScriptSource" sqlType="VARCHAR" length="100" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="GroupId"/>
+      <foreign-key name="announcement_group_dynamic_ibfk_1" columns="GroupId" ref-table="announcement_group" ref-schema="" ref-catalog="bvicam" ref-columns="GroupId" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="announcement_group_static" schema="" catalog="bvicam" type="TABLE">
+      <column name="GroupId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="MembRollNo" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="GroupId"/>
+      <foreign-key name="announcement_group_static_ibfk_2" columns="MembRollNo" ref-table="master_student" ref-schema="" ref-catalog="bvicam" ref-columns="RollNo" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="announcement_group_static_ibfk_1" columns="GroupId" ref-table="announcement_group" ref-schema="" ref-catalog="bvicam" ref-columns="GroupId" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="announcement_map_all_group" schema="" catalog="bvicam" type="TABLE">
+      <column name="AnnouncementId" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="GroupId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="AnnouncementId,GroupId"/>
+      <foreign-key name="announcement_map_all_group_ibfk_1" columns="AnnouncementId" ref-table="announcement_all" ref-schema="" ref-catalog="bvicam" ref-columns="AnnouncementId" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="announcement_map_all_group_ibfk_2" columns="GroupId" ref-table="announcement_group" ref-schema="" ref-catalog="bvicam" ref-columns="GroupId" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="announcement_map_all_tag" schema="" catalog="bvicam" type="TABLE">
+      <column name="AnnouncementId" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="TagId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" def="MA=="/>
+      <primary-key name="PRIMARY" columns="AnnouncementId,TagId"/>
+      <foreign-key name="announcement_map_all_tag_ibfk_1" columns="AnnouncementId" ref-table="announcement_all" ref-schema="" ref-catalog="bvicam" ref-columns="AnnouncementId" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="announcement_map_all_tag_ibfk_2" columns="TagId" ref-table="announcement_tag" ref-schema="" ref-catalog="bvicam" ref-columns="TagId" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="announcement_map_tag_group" schema="" catalog="bvicam" type="TABLE">
+      <column name="TagId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="GroupId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" def="MA=="/>
+      <primary-key name="PRIMARY" columns="TagId,GroupId"/>
+      <foreign-key name="announcement_map_tag_group_ibfk_1" columns="TagId" ref-table="announcement_tag" ref-schema="" ref-catalog="bvicam" ref-columns="TagId" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="announcement_map_tag_group_ibfk_2" columns="GroupId" ref-table="announcement_group" ref-schema="" ref-catalog="bvicam" ref-columns="GroupId" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="announcement_tag" schema="" catalog="bvicam" type="TABLE">
+      <column name="TagId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="TagName" sqlType="VARCHAR" length="20" precision="0" nullable="false" jdbcType="12"/>
+      <column name="CategoryId" sqlType="VARCHAR" length="4" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="TagId"/>
+      <foreign-key name="announcement_tag_ibfk_1" columns="CategoryId" ref-table="announcement_category" ref-schema="" ref-catalog="bvicam" ref-columns="CategoryId" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="announcement_map_all_tag_ibfk_2" table="announcement_map_all_tag" schema="" catalog="bvicam" columns="TagId"/>
+      <exported-key name="announcement_map_tag_group_ibfk_1" table="announcement_map_tag_group" schema="" catalog="bvicam" columns="TagId"/>
+    </table>
+    <table name="api_developer" schema="" catalog="bvicam" type="TABLE">
+      <column name="DeveloperId" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="API_Key" sqlType="VARCHAR" length="32" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="DeveloperId"/>
+      <exported-key name="api_enduser_ibfk_2" table="api_enduser" schema="" catalog="bvicam" columns="DeveloperId"/>
+    </table>
+    <table name="api_enduser" schema="" catalog="bvicam" type="TABLE">
+      <column name="UserId" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="DeveloperId" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="LastAccess" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
+      <column name="AccountStatus" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="UserId"/>
+      <foreign-key name="api_enduser_ibfk_3" columns="UserId" ref-table="master_student" ref-schema="" ref-catalog="bvicam" ref-columns="RollNo" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="api_enduser_ibfk_2" columns="DeveloperId" ref-table="api_developer" ref-schema="" ref-catalog="bvicam" ref-columns="DeveloperId" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="attendance_accumulated" schema="" catalog="bvicam" type="TABLE">
+      <column name="RollNo" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="SubCode" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="PresentCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="AbsentCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="RollNo,SubCode"/>
+      <foreign-key name="attendance_accumulated_ibfk_3" columns="RollNo" ref-table="master_student" ref-schema="" ref-catalog="bvicam" ref-columns="RollNo" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="attendance_accumulated_ibfk_2" columns="SubCode" ref-table="master_subject" ref-schema="" ref-catalog="bvicam" ref-columns="SubCode" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="attendance_leave_count" schema="" catalog="bvicam" type="TABLE">
+      <column name="RollNo" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="LeaveType" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="UsedCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="RollNo,LeaveType"/>
+      <foreign-key name="attendance_leave_count_ibfk_3" columns="RollNo" ref-table="master_student" ref-schema="" ref-catalog="bvicam" ref-columns="RollNo" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="attendance_leave_count_ibfk_2" columns="LeaveType" ref-table="attendance_leave_type" ref-schema="" ref-catalog="bvicam" ref-columns="LeaveType" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="attendance_leave_type" schema="" catalog="bvicam" type="TABLE">
+      <column name="LeaveType" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="LeaveName" sqlType="VARCHAR" length="20" precision="0" nullable="false" jdbcType="12"/>
+      <column name="MaxLeaves" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="LeaveType"/>
+      <exported-key name="attendance_leave_count_ibfk_2" table="attendance_leave_count" schema="" catalog="bvicam" columns="LeaveType"/>
+      <exported-key name="attendance_leaves_ibfk_3" table="attendance_leaves" schema="" catalog="bvicam" columns="LeaveType"/>
+    </table>
+    <table name="attendance_leaves" schema="" catalog="bvicam" type="TABLE">
+      <column name="RollNo" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="SubCode" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="LeaveDate" sqlType="DATE" length="10" precision="0" nullable="false" jdbcType="91"/>
+      <column name="LeaveType" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="RollNo,SubCode,LeaveDate"/>
+      <foreign-key name="attendance_leaves_ibfk_4" columns="RollNo" ref-table="master_student" ref-schema="" ref-catalog="bvicam" ref-columns="RollNo" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="attendance_leaves_ibfk_2" columns="SubCode" ref-table="master_subject" ref-schema="" ref-catalog="bvicam" ref-columns="SubCode" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="attendance_leaves_ibfk_3" columns="LeaveType" ref-table="attendance_leave_type" ref-schema="" ref-catalog="bvicam" ref-columns="LeaveType" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="master_student" schema="" catalog="bvicam" type="TABLE">
+      <column name="RollNo" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="Batch" sqlType="YEAR" length="0" precision="0" nullable="false" jdbcType="91"/>
+      <column name="Semester" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="FirstName" sqlType="VARCHAR" length="30" precision="0" nullable="false" jdbcType="12"/>
+      <column name="LastName" sqlType="VARCHAR" length="30" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Email" sqlType="VARCHAR" length="30" precision="0" nullable="false" jdbcType="12"/>
+      <column name="PhoneNo" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="RollNo"/>
+      <exported-key name="announcement_group_static_ibfk_2" table="announcement_group_static" schema="" catalog="bvicam" columns="MembRollNo"/>
+      <exported-key name="api_enduser_ibfk_3" table="api_enduser" schema="" catalog="bvicam" columns="UserId"/>
+      <exported-key name="attendance_accumulated_ibfk_3" table="attendance_accumulated" schema="" catalog="bvicam" columns="RollNo"/>
+      <exported-key name="attendance_leave_count_ibfk_3" table="attendance_leave_count" schema="" catalog="bvicam" columns="RollNo"/>
+      <exported-key name="attendance_leaves_ibfk_4" table="attendance_leaves" schema="" catalog="bvicam" columns="RollNo"/>
+    </table>
+    <table name="master_subject" schema="" catalog="bvicam" type="TABLE">
+      <column name="SubCode" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="SubName" sqlType="VARCHAR" length="50" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Semester" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <primary-key name="PRIMARY" columns="SubCode"/>
+      <exported-key name="attendance_accumulated_ibfk_2" table="attendance_accumulated" schema="" catalog="bvicam" columns="SubCode"/>
+      <exported-key name="attendance_leaves_ibfk_2" table="attendance_leaves" schema="" catalog="bvicam" columns="SubCode"/>
+      <exported-key name="timetable_permanent_ibfk_1" table="timetable_permanent" schema="" catalog="bvicam" columns="SubCode"/>
+      <exported-key name="timetable_temporary_ibfk_1" table="timetable_temporary" schema="" catalog="bvicam" columns="SubCode"/>
+    </table>
+    <table name="timetable_permanent" schema="" catalog="bvicam" type="TABLE">
+      <column name="SubCode" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Day" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="StartTime" sqlType="TIME" length="8" precision="0" nullable="false" jdbcType="92"/>
+      <column name="EndTime" sqlType="TIME" length="8" precision="0" nullable="false" jdbcType="92"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <foreign-key name="timetable_permanent_ibfk_1" columns="SubCode" ref-table="master_subject" ref-schema="" ref-catalog="bvicam" ref-columns="SubCode" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="timetable_temporary" schema="" catalog="bvicam" type="TABLE">
+      <column name="SubCode" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
+      <column name="Date" sqlType="DATE" length="10" precision="0" nullable="false" jdbcType="91"/>
+      <column name="StartTime" sqlType="TIME" length="8" precision="0" nullable="false" jdbcType="92"/>
+      <column name="EndTime" sqlType="TIME" length="8" precision="0" nullable="false" jdbcType="92"/>
+      <column name="Dirty" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <foreign-key name="timetable_temporary_ibfk_1" columns="SubCode" ref-table="master_subject" ref-schema="" ref-catalog="bvicam" ref-columns="SubCode" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+  </data-source>
+</component>

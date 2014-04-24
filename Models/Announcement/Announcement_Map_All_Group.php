@@ -6,18 +6,21 @@
  * Time: 10:16 PM
  */
 
-include_once(dirname(__FILE__)."/../Model.php");
+require_once(dirname(__FILE__)."/../Model.php");
+require_once(dirname(__FILE__)."/../Announcement/Announcement_All.php");
+require_once(dirname(__FILE__)."/../Announcement/Announcement_Group.php");
 
 class Announcement_Map_All_Group extends Model{
-    public function __construct() {
+    public function __construct($announcementId=null, $groupId=null) {
         parent::__construct();
         $this->tablename = "announcement_map_all_group";
-        $this->attribs['AnnouncementId'] = null;
-        $this->attribs['GroupId'] = null;
+        $this->attribs['AnnouncementId'] = $announcementId;
+        $this->attribFlags['AnnouncementId']['FK'] = new Announcement_All();
+        $this->attribs['GroupId'] = $groupId;
+        $this->attribFlags['GroupId']['FK'] = new Announcement_Group();
     }
 
-    public function setData($announcementId, $groupId) {
-        $this->attribs['AnnouncementId'] = $announcementId;
-        $this->attribs['GroupId'] = $groupId;
+    public function setData($datas) {
+        parent::setData($datas);
     }
 } 

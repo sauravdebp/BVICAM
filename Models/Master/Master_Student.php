@@ -9,23 +9,9 @@
 include_once(dirname(__FILE__)."/../Model.php");
 
 class Master_Student extends Model{
-    private $validData = false;
-    public function __construct() {
+    public function __construct($rollNo=null, $batch=null, $semester=null, $firstName=null, $lastName=null, $email=null, $phoneNo=null) {
         parent::__construct();
         $this->tablename = "master_student";
-        $this->attribs['RollNo'] = null;
-        $this->attribs['Batch'] = null;
-        $this->attribs['Semester'] = null;
-        $this->attribs['FirstName'] = null;
-        $this->attribs['LastName'] = null;
-        $this->attribs['Email'] = null;
-        $this->attribs['PhoneNo'] = null;
-    }
-
-    public function setData($rollNo, $batch, $semester, $firstName, $lastName, $email, $phoneNo) {
-        if($semester >= 1 && $semester <= 6)
-            $this->validData = true;
-
         $this->attribs['RollNo'] = $rollNo;
         $this->attribs['Batch'] = $batch;
         $this->attribs['Semester'] = $semester;
@@ -35,11 +21,7 @@ class Master_Student extends Model{
         $this->attribs['PhoneNo'] = $phoneNo;
     }
 
-    public function insertData() {
-        if(!$this->validData) {
-            return false;
-        }
-        else
-            parent::insertData();
+    public function setData($datas) {
+        parent::setData($datas);
     }
 } 

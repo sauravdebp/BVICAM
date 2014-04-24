@@ -6,8 +6,18 @@
  * Time: 9:13 PM
  */
 
+function QueryBuilder_SELECT($attribs) {
+    if(!$attribs)
+        $attribs = "*";
+    return "SELECT $attribs ";
+}
+
 function QueryBuilder_WHERE($cond) {
-    $noofArgs = func_num_args();
+    if(!$cond)
+        return "";
+    return "WHERE $cond ";
+
+    /*$noofArgs = func_num_args();
     if($noofArgs%2 == 0) {
         die("Invalid number of arguments to QueryBuilder_WHERE()");
     }
@@ -26,5 +36,21 @@ function QueryBuilder_WHERE($cond) {
         }
         $query = rtrim($query, " $cond");
     }
-    return sprintf("%s;", $query);
+    return sprintf("%s;", $query);*/
+}
+
+function QueryBuilder_SET($attribs, $attribVals=array()) {
+    $setQuery = "SET ";
+    if($attribs != null) {
+        $attribArr = explode(",", $attribs);
+        for($i=0; $i<count($attribArr); $i++) {
+            $setQuery .= trim($attribArr[$i]) . "='" . $attribVals[trim($attribArr[$i])] . "',";
+        }
+    }
+    else {
+        foreach($attribVals as $attrib=>$val) {
+            $setQuery .= $attrib . "='" . $val . "',";
+        }
+    }
+    return sprintf("%s ", rtrim($setQuery, ","));
 }
