@@ -22,7 +22,7 @@ function getAllAnnouncements() {
     require_once("Announcement/Announcement_Map_All_Tag.php");
     $allAnn = array();
     $obj = new Announcement_All();
-    $records = $obj->retrieveRecord();
+    $records = $obj->retrieveRecord(null, null, "ORDER BY Date, Time DESC");
     foreach($records as $record) {
         $annObj = new Announcement();
         $annObj->id = $record['AnnouncementId'];
@@ -54,26 +54,9 @@ $app = new \Slim\Slim();
 
 $app->get('/announcements', function() use($app) {
     $app->response()->header('Content-Type', 'application/json');
-    $allAnn = new Announcement();
+    //$allAnn = new Announcement();
     $allAnn = getAllAnnouncements();
     echo json_encode($allAnn);
 });
 
 $app->run();
-
-/*foreach($allAnn as $ann) {
-    foreach($ann as $col=>$val){
-        if(is_array($val)) {
-            echo $col . " => ";
-            foreach($val as $v) {
-                echo $v . ", ";
-            }
-            echo "<br>";
-        }
-        else {
-            echo $col . " => " . $val;
-            echo "<br>";
-        }
-    }
-    echo "<br>";
-}*/

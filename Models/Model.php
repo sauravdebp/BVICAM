@@ -67,11 +67,7 @@ abstract class Model {
     }
 
     public function retrieveRecord($attribs=null, $cond=null) {
-        if($cond == null)
-            $dirty = " Dirty='0'";
-        else
-            $dirty = " AND Dirty='0'";
-        $query = $this->buildRetrieveQuery($attribs, $cond.$dirty);
+        $query = call_user_func_array(array($this, 'buildRetrieveQuery'), func_get_args());
         $result = $this->fireQuery($query);
         $allRows = array();
         while($row=mysqli_fetch_assoc($result)){
@@ -80,12 +76,16 @@ abstract class Model {
         return $allRows;
     }
 
-    public function buildRetrieveQuery($attribs=null,$cond=null) {
+    public function buildRetrieveQuery($attribs=null, $cond=null) {
         include_once("Utils/QueryBuilder.php");
+        if($cond == null)
+            $dirty = " Dirty='0'";
+        else
+            $dirty = " AND Dirty='0'";
         $select = QueryBuilder_SELECT($attribs);
         $from = "FROM " . $this->tablename . " ";
-        $where = QueryBuilder_WHERE($cond);
-        $query = rtrim($select . $from . $where, " ");
+        $where = QueryBuilder_WHERE($cond.$dirty);
+        $query = rtrim($select . $from . $where . (func_num_args()>2?func_get_arg(2):""), " ");
         $query = sprintf("(%s)", $query);
         return $query;
     }
