@@ -8,7 +8,7 @@
 require_once("../Models/Announcement/Announcement_Map_All_Group.php");
 
 $obj = new Announcement_Map_All_Group();
-if($obj->captureData()){
+if($obj->form->captureData()){
     $obj->insertRecord();
 }
 ?>
@@ -17,7 +17,7 @@ if($obj->captureData()){
 <head><title>Map Announcement with Group</title></head>
 <body>
 <?php
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php

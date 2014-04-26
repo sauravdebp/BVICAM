@@ -7,7 +7,7 @@
  */
 require_once "../Models/Announcement/Announcement_Category.php";
 $obj = new Announcement_Category();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     $obj->insertRecord();
 }
 else {
@@ -19,7 +19,7 @@ else {
 <head><title>Create Category</title></head>
 <body>
 <?php
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php

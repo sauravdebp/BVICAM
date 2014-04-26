@@ -7,7 +7,7 @@
  */
 include_once("../Models/Attendance/Attendance_Leave_Type.php");
 $obj = new Attendance_Leave_Type();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     $obj->insertRecord();
 }
 ?>
@@ -18,7 +18,7 @@ if($obj->captureData()) {
 </head>
 <body>
 <?php
-$obj->buildForm("GET");
+$obj->form->buildForm("GET");
 ?>
 <table>
     <?php

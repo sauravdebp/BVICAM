@@ -7,15 +7,11 @@
  */
 include_once("../Models/Master/Master_Student.php");
 $studentObj = new Master_Student();
-if($studentObj->captureData()) {
+if($studentObj->form->captureData()) {
     $studentObj->insertRecord();
 }
 else {
     echo"Fill Up the Form";
-    /*if(isset($_POST))
-        echo "<h1>".$_POST['txt_RollNo']."</h1>";
-    if(isset($_GET))
-        echo "<h1>".$_POST['txt_RollNo']."</h1>";*/
 }
 ?>
 
@@ -26,7 +22,7 @@ else {
 <body>
 <?php
 $obj = new Master_Student();
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php

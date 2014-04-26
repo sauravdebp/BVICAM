@@ -7,7 +7,7 @@
  */
 require_once "../Models/Announcement/Announcement_Group.php";
 $obj = new Announcement_Group();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     $obj->insertRecord();
 }
 else {
@@ -19,7 +19,7 @@ else {
 <head><title>Create Group</title></head>
 <body>
 <?php
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php

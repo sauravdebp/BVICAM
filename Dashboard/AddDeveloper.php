@@ -7,7 +7,7 @@
  */
 include_once("../Models/API/Api_Developer.php");
 $obj = new Api_Developer();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     if(!$obj->insertRecord())
         echo "Error inserting data";
 }
@@ -19,7 +19,7 @@ if($obj->captureData()) {
 </head>
 <body>
 <?php
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php

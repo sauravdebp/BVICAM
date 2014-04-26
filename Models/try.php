@@ -22,7 +22,7 @@ function getAllAnnouncements() {
     require_once("Announcement/Announcement_Map_All_Tag.php");
     $allAnn = array();
     $obj = new Announcement_All();
-    $records = $obj->retrieveRecord(null, null, "ORDER BY Date, Time DESC");
+    $records = $obj->retrieveRecord(null, null, "ORDER BY Date DESC, Time DESC");
     foreach($records as $record) {
         $annObj = new Announcement();
         $annObj->id = $record['AnnouncementId'];

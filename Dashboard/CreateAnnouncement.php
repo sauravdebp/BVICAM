@@ -7,7 +7,7 @@
  */
 require_once ("../Models/Announcement/Announcement_All.php");
 $obj = new Announcement_All();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     $obj->insertRecord();
 }
 else {
@@ -19,11 +19,11 @@ else {
 <head><title>Create Announcement</title></head>
 <body>
 <?php
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php
-    $records = $obj->retrieveRecord();
+    $records = $obj->retrieveRecord(null, null, "ORDER BY date DESC ,time DESC");
     $row = "";
     foreach($records as $record) {
         $row .= "<tr>";

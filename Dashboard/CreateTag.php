@@ -7,7 +7,7 @@
  */
 require_once "../Models/Announcement/Announcement_Tag.php";
 $obj = new Announcement_Tag();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     $obj->insertRecord();
 }
 else {
@@ -19,7 +19,7 @@ else {
 <head><title>Create Tag</title></head>
 <body>
 <?php
-$obj->buildForm("POST");
+$obj->form->buildForm("POST");
 ?>
 <table>
     <?php

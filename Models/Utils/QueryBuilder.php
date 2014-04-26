@@ -12,31 +12,18 @@ function QueryBuilder_SELECT($attribs) {
     return "SELECT $attribs ";
 }
 
+function QueryBuilder_FROM($tablename) {
+    $from = "FROM ";
+    foreach(func_get_args() as $table){
+        $from .= "$table,";
+    }
+    return sprintf("%s ", rtrim($from, ","));
+}
+
 function QueryBuilder_WHERE($cond) {
     if(!$cond)
         return "";
     return "WHERE $cond ";
-
-    /*$noofArgs = func_num_args();
-    if($noofArgs%2 == 0) {
-        die("Invalid number of arguments to QueryBuilder_WHERE()");
-    }
-    $query = "WHERE ";
-    if($noofArgs == 1) {
-        $query .= $cond;
-    }
-    else {
-        $args = func_get_args();
-        $filters = array();
-        for($i=2; $i<$noofArgs; $i+=2) {
-            $filters[$args[$i-1]] = $args[$i];
-        }
-        foreach($filters as $col=>$val) {
-            $query .= "$col='".$val."' $cond ";
-        }
-        $query = rtrim($query, " $cond");
-    }
-    return sprintf("%s;", $query);*/
 }
 
 function QueryBuilder_SET($attribs, $attribVals=array()) {

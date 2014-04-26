@@ -7,7 +7,7 @@
  */
 include_once("../Models/Master/Master_Subject.php");
 $obj = new Master_Subject();
-if($obj->captureData()) {
+if($obj->form->captureData()) {
     if(!$obj->insertRecord())
         echo "Error inserting data!";
 }
@@ -19,7 +19,7 @@ if($obj->captureData()) {
 </head>
 <body>
 <?php
-$obj->buildForm("GET");
+$obj->form->buildForm("GET");
 ?>
 <table>
     <?php
