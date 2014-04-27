@@ -25,7 +25,7 @@ $obj->form->buildForm("GET");
     <?php
     $records = $obj->retrieveRecord();
     $row = "";
-    foreach($records as $record) {
+    while($record = $obj->getRecord()) {
         $row .= "<tr>";
         foreach($record as $col=>$val) {
             $row .= "<td>$val</td>";

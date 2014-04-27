@@ -22,8 +22,8 @@ function getAllAnnouncements() {
     require_once("Announcement/Announcement_Map_All_Tag.php");
     $allAnn = array();
     $obj = new Announcement_All();
-    $records = $obj->retrieveRecord(null, null, "ORDER BY Date DESC, Time DESC");
-    foreach($records as $record) {
+    $obj->retrieveRecord(null, null, "ORDER BY Date DESC, Time DESC");
+    while($record = $obj->getRecord()) {
         $annObj = new Announcement();
         $annObj->id = $record['AnnouncementId'];
         $annObj->content = $record['Content'];
@@ -54,7 +54,6 @@ $app = new \Slim\Slim();
 
 $app->get('/announcements', function() use($app) {
     $app->response()->header('Content-Type', 'application/json');
-    //$allAnn = new Announcement();
     $allAnn = getAllAnnouncements();
     echo json_encode($allAnn);
 });

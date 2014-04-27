@@ -29,6 +29,7 @@ abstract class Model {
         return $this->tablename;
     }
     public $form;
+    protected $collection = array();
 
     public function __construct() {
         $this->mysql_host = "localhost";
@@ -107,13 +108,12 @@ abstract class Model {
      * Return Value : An array of associative arrays.
      */
     public function retrieveRecord($attribs=null, $cond=null, $extraQuery=null) {
-        $query = call_user_func_array(array($this, 'buildRetrieveQuery'), func_get_args());
+        $query = $this->getRetrieveQuery($attribs, $cond, $extraQuery);
         $result = $this->fireQuery($query);
-        $allRows = array();
         while($row=mysqli_fetch_assoc($result)){
-            array_push($allRows, $row);
+            array_push($this->collection, $row);
         }
-        return $allRows;
+        return $this->collection;
     }
 
     /*
@@ -124,31 +124,48 @@ abstract class Model {
      *              $cond - same as retrieveRecord()
      *              $extraQuery - same as retrieveRecord()
      */
-    public function retrieveRecordByJoin($joinRelnObj, $joinAttrib, $attribs=null, $cond=null, $extraQuery=null) {
-        require_once("Utils/QueryBuilder.php");
-        $select = QueryBuilder_SELECT($attribs);
-        $from = "FROM $this->tablename JOIN $joinRelnObj->tablename ON $this->tablename.$joinAttrib = $joinRelnObj->tablename.$joinAttrib ";
-        $where = QueryBuilder_WHERE($cond);
-        $query = rtrim($select . $from . $where . $extraQuery, " ");
+    public function retrieveRecordByJoin($attribs=null, $cond=null, $extraQuery=null, $joinRelnObj, $joinAttrib) {
+        $query = $this->getRetrieveByJoinQuery($attribs, $cond, $extraQuery, $joinRelnObj, $joinAttrib);
         $result = $this->fireQuery($query);
-        $allRows = array();
         while($row=mysqli_fetch_assoc($result)){
-            array_push($allRows, $row);
+            array_push($this->collection, $row);
         }
-        return $allRows;
+        return $this->collection;
     }
 
-    public function buildRetrieveQuery($attribs=null, $cond=null, $extraQuery=null) {
+    public function getRecord() {
+        return array_pop($this->collection);
+    }
+
+    public function getRetrieveByJoinQuery($attribs=null, $cond=null, $extraQuery=null, $joinRelnObj, $joinAttrib) {
+        $dirty = " $this->tablename.Dirty='0' AND $joinRelnObj->tablename.Dirty='0'";
+        if($cond != null)
+            $dirty = " AND" . $dirty;
+        return $this->buildRetrieveQuery($attribs, $cond.$dirty, $extraQuery, $joinRelnObj, $joinAttrib);
+    }
+
+    public function getRetrieveQuery($attribs=null, $cond=null, $extraQuery=null) {
+        $dirty = " Dirty='0'";
+        if($cond != null)
+            $dirty = " AND" . $dirty;
+        return $this->buildRetrieveQuery($attribs, $cond.$dirty, $extraQuery);
+    }
+
+    private function buildRetrieveQuery() {
         require_once("Utils/QueryBuilder.php");
-        if($cond == null)
-            $dirty = " Dirty='0'";
-        else
-            $dirty = " AND Dirty='0'";
+        $attribs = func_get_arg(0);
+        $cond = func_get_arg(1);
+        $extraQuery = func_get_arg(2);
+        //$dirty = ($cond==null) ? " Dirty='0'" : " AND Dirty='0'";
         $select = QueryBuilder_SELECT($attribs);
         $from = QueryBuilder_FROM($this->tablename);
-        $where = QueryBuilder_WHERE($cond.$dirty);
-        $query = rtrim($select . $from . $where . $extraQuery, " ");
-        $query = sprintf("(%s)", $query);
+        $where = QueryBuilder_WHERE($cond);
+        if(func_num_args() == 5) {
+            $joinRelnObj = func_get_arg(3);
+            $joinAttrib = func_get_arg(4);
+            $from = "FROM $this->tablename JOIN $joinRelnObj->tablename ON $this->tablename.$joinAttrib = $joinRelnObj->tablename.$joinAttrib ";
+        }
+        $query = sprintf("(%s)", rtrim($select . $from . $where . $extraQuery, " "));
         return $query;
     }
 

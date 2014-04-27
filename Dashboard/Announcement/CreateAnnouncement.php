@@ -5,7 +5,7 @@
  * Date: 4/24/14
  * Time: 8:21 PM
  */
-require_once ("../Models/Announcement/Announcement_All.php");
+require_once("../Models/Announcement/Announcement_All.php");
 $obj = new Announcement_All();
 if($obj->form->captureData()) {
     $obj->insertRecord();
