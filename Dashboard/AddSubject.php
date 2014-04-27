@@ -23,7 +23,7 @@ $obj->form->buildForm("GET");
 ?>
 <table>
     <?php
-    $records = $obj->retrieveRecord();
+    $obj->retrieveRecord();
     $row = "";
     while($record = $obj->getRecord()) {
         $row .= "<tr>";

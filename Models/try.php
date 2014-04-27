@@ -6,7 +6,7 @@
  * Time: 6:46 PM
  */
 
-class Announcement {
+/*class Announcement {
     public $id;
     public $content;
     public $date;
@@ -56,6 +56,47 @@ $app->get('/announcements', function() use($app) {
     $app->response()->header('Content-Type', 'application/json');
     $allAnn = getAllAnnouncements();
     echo json_encode($allAnn);
+});
+
+$app->run();*/
+
+class TimeTable
+{
+    public $subcode;
+    public $day;
+    public $startTime;
+    public $endTime;
+
+}
+
+function showTimeTable()
+{
+    require_once("Timetable/Timetable_Permanent.php");
+    require_once("Timetable/Timetable_Temporary.php");
+    $timeTable=array();
+    $ttable=new Timetable_Permanent();
+    $records = $ttable->retrieveRecord(null, null,null);
+    foreach($records as $record) {
+        $tobj= new TimeTable();
+        $tobj->subcode=$record['SubCode'];
+        $tobj->day=$record['Day'];
+        $tobj->startTime=$record['StartTime'];
+        $tobj->endTime=$record['EndTime'];
+        array_push($timeTable,$tobj);
+    }
+    return $timeTable;
+}
+
+require_once ("../Libs/Slim/Slim.php");
+
+\Slim\Slim::registerAutoloader();
+
+$app = new \Slim\Slim();
+
+$app->get('/timetable', function() use($app) {
+    $app->response()->header('Content-Type', 'application/json');
+    $timeTable = showTimeTable();
+    echo json_encode($timeTable);
 });
 
 $app->run();

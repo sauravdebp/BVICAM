@@ -37,7 +37,7 @@ class FormBuilder {
      */
     private function getInputRow($col) {
         $row = "";
-        if(isset($this->relnObj->AttribFlags()[$col]['isfunc']))
+        if(isset($this->relnObj->AttribFlags()[$col]['isfunc']))    //This line causing problem with php 5.3(Error: ). Runs on php 5.4.
             return "";
         if(isset($this->relnObj->AttribFlags()[$col]['FK'])) {
             $objectType = $this->relnObj->AttribFlags()[$col]['FK'];
