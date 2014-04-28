@@ -57,11 +57,17 @@ function showTimeTable($roll)
     $obj2=new Master_Subject();
     $obj3=new Timetable_Permanent();
     $obj4=new Timetable_Temporary();
+    $records=$obj3->retrieveRecordByJoin(null,null,null,$obj2->retrieveRecordByJoin(null,"RollNo=$roll",null,$obj1,"Semester"),"SubCode");
+    foreach ($records as $record) {
+        $tobj = new TimeTable();
+        $tobj->subcode = $record['SubCode'];
+        $tobj->startTime = $record['StartTime'];
+        $tobj->endTime = $record['EndTime'];
 
-    $records=$obj3->retrieveRecordByJoin(null,"SubCode=$obj2->subCode",null,$obj2->retrieveRecordByJoin(null,"RollNo=$roll",null,$obj1,"Semester"),"SubCode");
-
-
-
+        array_push($timeTable, $tobj);
+    }
+    return $timeTable;
+}
 
 
 
@@ -120,9 +126,9 @@ function showTimeTable($roll)
 
 
     return $timeTable;*/
-}
 
-showTimeTable(45);
+
+
 require_once("../Libs/Slim/Slim.php");
 
 \Slim\Slim::registerAutoloader();
@@ -131,9 +137,9 @@ $app = new \Slim\Slim();
 
 $app->get('/timetable', function () use ($app) {
     $app->response()->header('Content-Type', 'application/json');
-    //$roll=$app->request->headers->get('RollNo');
-    /*$timeTable = showTimeTable($roll);
-    echo json_encode($timeTable);*/
+   //$roll=$app->request->headers->get('RollNo');
+   $timeTable = showTimeTable(1);
+    echo json_encode($timeTable);
 });
 
 $app->run();
