@@ -178,10 +178,10 @@ abstract class Model {
     public function updateRecord($attribs=null, $cond=null) {
         require_once("Utils/QueryBuilder.php");
         $query = "UPDATE " . $this->tablename . " ";
-        $set = QueryBuilder_SET($attribs, $this->attribs);
+        $set = QueryBuilder_SET($attribs, $this);
         $cond = QueryBuilder_WHERE($cond);
         $query .= $set . $cond;
-
+        echo $query;
         return $this->fireQuery($query);
     }
 }

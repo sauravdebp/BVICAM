@@ -18,7 +18,8 @@ class Api_EndUser extends Model{
         $this->attribFlags['UserId']['FK'] = new Master_Student();
         $this->attribs['DeveloperId'] = $developerId;
         $this->attribFlags['DeveloperId']['FK'] = new Api_Developer();
-        $this->attribs['LastAccess'] = null;
+        $this->attribs['LastAccess'] = "NOW()";
+        $this->attribFlags['LastAccess']['isfunc'] = true;
         $this->attribs['AccountStatus'] = null;
     }
 
