@@ -11,7 +11,7 @@ include_once(dirname(__FILE__)."/../Model.php");
 class Timetable_Temporary extends Model{
     public function __construct($subCode=null, $date=null, $startTime=null, $endTime=null) {
         parent::__construct();
-        $this->tablename = "timetable_permanent";
+        $this->tablename = "timetable_temporary";
         $this->attribs['SubCode'] = $subCode;
         $this->attribs['Date'] = $date;
         $this->attribs['StartTime'] = $startTime;
