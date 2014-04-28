@@ -32,7 +32,8 @@ function QueryBuilder_SET($attribs, $obj) {
     if($attribs != null) {
         $attribs = explode(",", $attribs);
         foreach($attribs as $attrib) {
-            $attribArr[$attrib] = $obj->Attribs()[$attrib];
+            $arr = $obj->Attribs();
+            $attribArr[$attrib] = $arr[$attrib];
         }
     }
     else {

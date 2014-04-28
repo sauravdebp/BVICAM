@@ -181,7 +181,6 @@ abstract class Model {
         $set = QueryBuilder_SET($attribs, $this);
         $cond = QueryBuilder_WHERE($cond);
         $query .= $set . $cond;
-        echo $query;
         return $this->fireQuery($query);
     }
 }
