@@ -2,13 +2,17 @@
     
     $dir = "Attendance";
 	$m_dir = "Master";
+	$api_dir = "API";
 	
-    include("../Models/$dir/Attendance_Accumulated.php");
-    include("../Models/$dir/Attendance_Leave_Count.php");
-    include("../Models/$dir/Attendance_Leave_Type.php");
-    include("../Models/$dir/Attendance_Leaves.php");
-	include("../Models/$m_dir/Master_Subject.php");
-	include("../Models/$m_dir/Master_Student.php");
+    require_once("../Models/$dir/Attendance_Accumulated.php");
+    require_once("../Models/$dir/Attendance_Leave_Count.php");
+    require_once("../Models/$dir/Attendance_Leave_Type.php");
+    require_once("../Models/$dir/Attendance_Leaves.php");
+	require_once("../Models/$m_dir/Master_Subject.php");
+	require_once("../Models/$m_dir/Master_Student.php");
+	require_once("../Models/$api_dir/API_Developer.php");
+	require_once("../Models/$api_dir/API_EndUser.php");
+	
 	
     class AttendanceSummary
     {
@@ -88,7 +92,7 @@
 		$records = $obj2 -> retrieveRecordByJoin("LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType",$obj3,"LeaveType");
 		
 		foreach($records as $record)
-			$attObj -> leaves_u_count[$record['LeaveName']] = $record['Count'];
+			$attObj -> leave_u_count[$record['LeaveName']] = $record['Count'];
 		
 		array_push($sub_att, $attObj);		
 		
@@ -102,7 +106,7 @@
 		$obj1 = new master_student();
 		$obj2 = new master_subject();
 		
-		$records = $obj1 -> retrieveRecordByJoin("SubCode", "RollNo = $roll",null,$obj2, "Semester");
+		$records = $obj1 -> retrieveRecordByJoin("SubCode", "RollNo = $roll",null, $obj2, "Semester");
 		
 		foreach($records as $record)
 			array_push($all_sub_att, getSubjectAttendance($roll, $record['SubCode']));
@@ -137,42 +141,90 @@
 		
 	}
        
-
-        require_once ("../Libs/Slim/Slim.php");
-
-        \Slim\Slim::registerAutoloader();
-
-        $app = new \Slim\Slim();
+	function validateHeader($app)
+	{
+		$roll = $app->request->headers->get('RollNo');
+		$api_key = $app->request->headers->get('API_Key');
+		$dev_id = $app->request->headers->get('DeveloperId');
 		
-		$app -> get('/attendanceSummary/:subcode', function($sub) use($app)
-        {
-            $app -> response() -> header('Content-Type', 'application/json');
-            $sub_att = getSubjectAttendance(911604413, $sub);
-            echo json_encode($sub_att);
-        });
-			
-		$app -> get('/attendanceSummary', function() use($app)
-        {
-            $app -> response() -> header('Content-Type', 'application/json');
-            $sub_att = getAllSubjectsAttendance(911604413);
-            $leaves = getLeaveUsedFromMax(911604413);
+		$obj = new Api_Developer();
+		
+		$records1 = $obj -> retrieveRecord(null, "DeveloperId = '$dev_id'");
+		
+		foreach($records1 as $record1)
+		{
+			if($record1['API_Key'] == $api_key)
+			{
+				$obj = new Api_enduser();
+		
+				$records2 = $obj -> retrieveRecord(null, "UserId = '$roll'");
+				
+				foreach($records2 as $record2)
+				{
+					if($record2['UserId'] == $roll)
+					{
+						$date = new DateTime();
+						//$update_value['LastAccess'] = $date -> getTimestamp();
+						//$obj -> setData($update_value);
+						$obj -> updateRecord("LastAccess", "UserId = '$roll'");
+					}
+			    }
+		    }
+	    }
+    }
+	
+	require_once ("../Libs/Slim/Slim.php");
+
+	\Slim\Slim::registerAutoloader();
+
+	$app = new \Slim\Slim();
+	
+	$app -> get('/attendanceSummary/:subcode', function($sub) use($app)
+	{
+		//if(validateHeader($app))
+		{
+			$roll = $app->request->headers->get('RollNo');
+			$app -> response() -> header('Content-Type', 'application/json');
+			$sub_att = getSubjectAttendance($roll, $sub);
+			echo json_encode($sub_att);
+		}	
+	});
+		
+	$app -> get('/attendanceSummary', function() use($app)
+	{
+		//if(validateHeader($app))
+		{
+			$app -> response() -> header('Content-Type', 'application/json');
+			$roll = $app->request->headers->get('RollNo');
+			$sub_att = getAllSubjectsAttendance($roll);
+			$leaves = getLeaveUsedFromMax($roll);
 			array_push($sub_att, $leaves);
 			echo json_encode($sub_att);
-        });
-		
-		$app -> get('/attendanceDetailed/:subcode/:start_date/:end_date', function($sub, $strt_date, $end_date) use($app)
+		}
+	});
+	
+	$app -> get('/attendanceDetailed/:subcode/:start_date/:end_date', function($sub, $strt_date, $end_date) use($app)
+	{
+        //if(validateHeader($app))
         {
             $app -> response() -> header('Content-Type', 'application/json');
-            $sub_att = getSubjectDetailAttendance(911604413, $sub, $strt_date, $end_date);
+            $roll = $app->request->headers->get('RollNo');
+            $sub_att = getSubjectDetailAttendance($roll, $sub, $strt_date, $end_date);
             echo json_encode($sub_att);
-        });
-		
-		$app -> get('/attendanceDetailed/:subcode', function($sub) use($app)
+        }
+	});
+	
+	$app -> get('/attendanceDetailed/:subcode', function($sub) use($app)
+	{
+		//if(validateHeader($app))
         {
             $app -> response() -> header('Content-Type', 'application/json');
-            $sub_att = getSubjectDetailAttendance(911604413, $sub);
+            $roll = $app->request->headers->get('RollNo');
+            $sub_att = getSubjectDetailAttendance($roll, $sub);
             echo json_encode($sub_att);
-        });
-		
-    $app->run();
+        }
+
+	});
+	
+	$app->run();
 ?>
