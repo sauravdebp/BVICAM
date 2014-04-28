@@ -15,16 +15,47 @@
         public $roll_no;
         public $sub_code;
 		public $sub_name;
-        public $p_count;
-        public $a_count;
-		public $leave_u_count = array();
+        public $p_count;					// present count
+        public $a_count;					// absent count
+		public $leave_u_count = array();	// leave used count		
     }
-	
+
 	class AttendanceDetailed
 	{
 		public $roll_no;
 		public $sub_code;
 		public $leaves = array();
+	}
+	
+	class LeaveUsedFromMax
+	{
+		public $roll_no;
+		public $u_count = array();			// Used count
+		public $m_count = array();			// Max count
+	}
+	
+	function getLeaveUsedFromMax($roll)
+	{
+		$leaves = array();
+		
+		$obj1 = new Attendance_Leave_Count();
+		$obj2 = new Attendance_Leave_Type();
+		
+		$records = $obj1 -> retrieveRecordByJoin(null, "RollNo = $roll", null, $obj2, "LeaveType");
+		
+		$leaveObj = new LeaveUsedFromMax();
+		
+		$leaveObj -> roll_no = $roll;
+		
+		foreach($records as $record)
+		{
+			$leaveObj -> u_count[$record['LeaveName']] = $record['UsedCount'];
+			$leaveObj -> m_count[$record['LeaveName']] = $record['MaxLeaves'];
+		}
+		
+		array_push($leaves, $leaveObj);
+		
+		return $leaves;
 	}
 	
     function getSubjectAttendance($roll, $sub)
@@ -54,7 +85,7 @@
 		$obj3 = new Attendance_Leave_Type();
 		$tablename = $obj3 -> tablename();
 		
-		$records = $obj2 -> retrieveRecordByJoin($obj3,"LeaveType", "LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType");
+		$records = $obj2 -> retrieveRecordByJoin("LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType",$obj3,"LeaveType");
 		
 		foreach($records as $record)
 			$attObj -> leaves_u_count[$record['LeaveName']] = $record['Count'];
@@ -71,15 +102,16 @@
 		$obj1 = new master_student();
 		$obj2 = new master_subject();
 		
-		$records = $obj1 -> retrieveRecordByJoin($obj2, "Semester", "SubCode", "RollNo = $roll");
+		$records = $obj1 -> retrieveRecordByJoin("SubCode", "RollNo = $roll",null,$obj2, "Semester");
 		
 		foreach($records as $record)
 			array_push($all_sub_att, getSubjectAttendance($roll, $record['SubCode']));
 		
+		
 		return $all_sub_att;
 	}
 	
-	function getSubjectDetailAttendance($roll, $sub, $strt_date = 0, $end_date = CURRENT_DATE())
+	function getSubjectDetailAttendance($roll, $sub, $strt_date = null, $end_date = null)
 	{
 		$sub_att = array();
 		
@@ -88,7 +120,10 @@
 		
 		$attObj = new AttendanceDetailed();
 		
-		$records = $obj1->retrieveRecordByJoin( $obj2, "LeaveType", "LeaveName, LeaveDate", "RollNo = $roll and SubCode = $sub and LeaveDate Between $strt_date and $end_date", "order by LeaveDate Desc ");
+		if($strt_date && $end_date)
+			$records = $obj1->retrieveRecordByJoin("LeaveName, LeaveDate", "RollNo = '$roll' and SubCode = '$sub' and LeaveDate Between '$strt_date' and '$end_date'", "order by LeaveDate Desc ",$obj2, "LeaveType");
+		else
+			$records = $obj1->retrieveRecordByJoin("LeaveName, LeaveDate", "RollNo = $roll and SubCode = $sub", "order by LeaveDate Desc ",$obj2, "LeaveType");
 		
 		$attObj -> roll_no = $roll;
 		$attObj -> sub_code = $sub;
@@ -101,37 +136,7 @@
 		return $sub_att;
 		
 	}
-	
-/*	
-		foreach($records as $record)
-			$attObj -> u_count[$record['LeaveType']] = $record['UsedCount'];
-
-		SELECT * FROM `attendance_leaves` WHERE SubCode = 102 and LeaveDate between '2014-03-24' and '2014-04-24'
-		
-	function getLeaveUsedCount($roll)
-	{
-		$leaves = array();
-		
-		$obj = new Attendance_Leave_Count();
-		
-		$records = $obj -> retrieveRecord(null, "RollNo = $roll");
-		
-		$leaveObj = new Leave_Type();
-		
-		$leaveObj -> roll_no = $roll;
-		
-		foreach($records as $record)
-		{
-			array_push($leaveObj -> leave_type, $record['LeaveDate']);
-			array_push($leaveObj -> u_count, $record['UsedCount']);
-		}
-		
-		array_push($leaves, $leaveObj);
-		
-		return $leaves;
-	}
-	
-*/       
+       
 
         require_once ("../Libs/Slim/Slim.php");
 
@@ -150,10 +155,12 @@
         {
             $app -> response() -> header('Content-Type', 'application/json');
             $sub_att = getAllSubjectsAttendance(911604413);
-            echo json_encode($sub_att);
+            $leaves = getLeaveUsedFromMax(911604413);
+			array_push($sub_att, $leaves);
+			echo json_encode($sub_att);
         });
 		
-		$app -> get('/attendanceDetailed/:subcode/:start_date/:end_date', function($sub, $strt_date = null, $end_date = null) use($app)
+		$app -> get('/attendanceDetailed/:subcode/:start_date/:end_date', function($sub, $strt_date, $end_date) use($app)
         {
             $app -> response() -> header('Content-Type', 'application/json');
             $sub_att = getSubjectDetailAttendance(911604413, $sub, $strt_date, $end_date);
