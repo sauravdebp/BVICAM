@@ -26,18 +26,26 @@ function QueryBuilder_WHERE($cond) {
     return "WHERE $cond ";
 }
 
-function QueryBuilder_SET($attribs, $attribVals=array()) {
+function QueryBuilder_SET($attribs, $obj) {
     $setQuery = "SET ";
+    $attribArr = array();
     if($attribs != null) {
-        $attribArr = explode(",", $attribs);
-        for($i=0; $i<count($attribArr); $i++) {
-            $setQuery .= trim($attribArr[$i]) . "='" . $attribVals[trim($attribArr[$i])] . "',";
+        $attribs = explode(",", $attribs);
+        foreach($attribs as $attrib) {
+            $attribArr[$attrib] = $obj->Attribs()[$attrib];
         }
     }
     else {
-        foreach($attribVals as $attrib=>$val) {
-            $setQuery .= $attrib . "='" . $val . "',";
-        }
+        $attribArr = $obj->Attribs();
     }
+    foreach($attribArr as $col=>$val) {
+        $attribFlags = $obj->AttribFlags();
+        if(!isset($attribFlags[$col]['isfunc'])) {
+            $val = "'" . trim($val) . "'";
+        }
+        $setQuery .= trim($col) . "=$val,";
+    }
+
+
     return sprintf("%s ", rtrim($setQuery, ","));
 }
