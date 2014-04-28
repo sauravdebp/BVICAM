@@ -50,53 +50,17 @@ function showTimeTable($roll)
     require_once("../Models/Timetable/Timetable_Temporary.php");
     require_once("../Models/Master/Master_Student.php");
     require_once("../Models/Master/Master_Subject.php");
-
     $timeTable = array();
 
     $obj1=new Master_Student();
     $obj2=new Master_Subject();
     $obj3=new Timetable_Permanent();
     $obj4=new Timetable_Temporary();
-    $records=$obj3->retrieveRecordByJoin(null,null,null,$obj2->retrieveRecordByJoin(null,"RollNo=$roll",null,$obj1,"Semester"),"SubCode");
-    foreach ($records as $record) {
-        $tobj = new TimeTable();
-        $tobj->subcode = $record['SubCode'];
-        $tobj->startTime = $record['StartTime'];
-        $tobj->endTime = $record['EndTime'];
-
-        array_push($timeTable, $tobj);
-    }
-    return $timeTable;
-}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-    $ttablePermanent = new Timetable_Permanent();
-    $ttableTemporary = new Timetable_Temporary();
-
-
-    $recordsPermanent = $ttablePermanent->retrieveRecord(null, null, null);
-    $recordsTemporary = $ttableTemporary->retrieveRecord(null, null, null);
+    $recordsPermanent=$obj3->retrieveRecordByJoin(null,"Master_Subject.subCode IN".$obj2->getRetrieveByJoinQuery("SubCode","RollNo=$roll",null,$obj1,"Semester"),null,$obj2,"SubCode");
+    $recordsTemporary=$obj4->retrieveRecordByJoin(null,"Master_Subject.subCode IN".$obj2->getRetrieveByJoinQuery("SubCode","RollNo=$roll",null,$obj1,"Semester"),null,$obj2,"SubCode");
 
     foreach ($recordsPermanent as $recordPermanent) {
             $tobj = new TimeTable();
@@ -125,9 +89,9 @@ function showTimeTable($roll)
         }
 
 
-    return $timeTable;*/
+    return $timeTable;
 
-
+}
 
 require_once("../Libs/Slim/Slim.php");
 
@@ -137,8 +101,8 @@ $app = new \Slim\Slim();
 
 $app->get('/timetable', function () use ($app) {
     $app->response()->header('Content-Type', 'application/json');
-   //$roll=$app->request->headers->get('RollNo');
-   $timeTable = showTimeTable(1);
+   $roll=$app->request->headers->get('RollNo');
+   $timeTable = showTimeTable($roll);
     echo json_encode($timeTable);
 });
 
