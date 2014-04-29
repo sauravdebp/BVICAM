@@ -92,6 +92,40 @@ function showTimeTable($roll)
     return $timeTable;
 
 }
+	function validateHeader($app)
+	{
+		require_once("../Models/API/API_Developer.php");
+		require_once("../Models/API/API_EndUser.php");
+		
+		$roll = $app->request->headers->get('RollNo');
+		$api_key = $app->request->headers->get('APIKey');
+		$dev_id = $app->request->headers->get('DeveloperId');
+		
+		$api_dev = new Api_Developer();
+		
+		$records1 = $api_dev -> retrieveRecord(null, "DeveloperId = '$dev_id'");
+		
+		if($records1)
+		{
+			foreach($records1 as $record1)
+			{
+				if($record1['API_Key'] == $api_key)
+				{
+					$api_end = new Api_EndUser();
+
+					$records2 = $api_end -> retrieveRecord(null, "UserId = '$roll'");
+
+					foreach($records2 as $record2)
+						if($record2['UserId'] == $roll)
+							$api_end -> updateRecord("LastAccess", "UserId = '$roll'");
+				}
+			}
+			return true;
+		}
+		
+		return false;
+	}
+
 
 require_once("../Libs/Slim/Slim.php");
 
@@ -100,10 +134,13 @@ require_once("../Libs/Slim/Slim.php");
 $app = new \Slim\Slim();
 
 $app->get('/timetable', function () use ($app) {
-    $app->response()->header('Content-Type', 'application/json');
-   $roll=$app->request->headers->get('RollNo');
-   $timeTable = showTimeTable($roll);
-    echo json_encode($timeTable);
+    if(validateHeader($app))
+	{
+		$app->response()->header('Content-Type', 'application/json');
+		$roll=$app->request->headers->get('RollNo');
+		$timeTable = showTimeTable($roll);
+		echo json_encode($timeTable);
+	}
 });
 
 $app->run();
