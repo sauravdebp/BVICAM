@@ -1,20 +1,14 @@
+
 <?php
     
     $dir = "Attendance";
-	$m_dir = "Master";
-	$api_dir = "API";
 	
     require_once("../Models/$dir/Attendance_Accumulated.php");
     require_once("../Models/$dir/Attendance_Leave_Count.php");
     require_once("../Models/$dir/Attendance_Leave_Type.php");
     require_once("../Models/$dir/Attendance_Leaves.php");
-	require_once("../Models/$m_dir/Master_Subject.php");
-	require_once("../Models/$m_dir/Master_Student.php");
-	require_once("../Models/$api_dir/API_Developer.php");
-	require_once("../Models/$api_dir/API_EndUser.php");
 	
-	
-    class AttendanceSummary
+	class AttendanceSummary
     {
         public $roll_no;
         public $sub_code;
@@ -38,44 +32,24 @@
 		public $m_count = array();			// Max count
 	}
 	
-	function getLeaveUsedFromMax($roll)
-	{
-		$leaves = array();
-		
-		$obj1 = new Attendance_Leave_Count();
-		$obj2 = new Attendance_Leave_Type();
-		
-		$records = $obj1 -> retrieveRecordByJoin(null, "RollNo = $roll", null, $obj2, "LeaveType");
-		
-		$leaveObj = new LeaveUsedFromMax();
-		
-		$leaveObj -> roll_no = $roll;
-		
-		foreach($records as $record)
-		{
-			$leaveObj -> u_count[$record['LeaveName']] = $record['UsedCount'];
-			$leaveObj -> m_count[$record['LeaveName']] = $record['MaxLeaves'];
-		}
-		
-		array_push($leaves, $leaveObj);
-		
-		return $leaves;
-	}
-	
+
     function getSubjectAttendance($roll, $sub)
     {
-        $sub_att = array();
+        require_once("../Models/Master/Master_Subject.php");
+		require_once("../Models/Master/Master_Student.php");
+		
+		$sub_att = array();
 
-        $obj = new master_subject();
-		$records = $obj -> retrieveRecord("SubName", "SubCode = $sub");
+        $m_sub = new master_subject();
+		$records = $m_sub -> retrieveRecord("SubName", "SubCode = $sub");
 		
 		$attObj = new AttendanceSummary();
 		foreach($records as $record)
 			$attObj -> sub_name = $record['SubName'];
 		
-		$obj1 = new Attendance_Accumulated();
+		$att_acc = new Attendance_Accumulated();
         		
-		$records = $obj1 -> retrieveRecord(null, "RollNo = $roll and SubCode = $sub");
+		$records = $att_acc -> retrieveRecord(null, "RollNo = $roll and SubCode = $sub");
 			
 		foreach($records as $record)
 		{
@@ -85,11 +59,11 @@
 			$attObj -> a_count = $record['AbsentCount'];
 		}
 		
-		$obj2 = new Attendance_Leaves();
-		$obj3 = new Attendance_Leave_Type();
-		$tablename = $obj3 -> tablename();
+		$att_l = new Attendance_Leaves();
+		$att_l_type = new Attendance_Leave_Type();
+		$tablename = $att_l_type -> tablename();
 		
-		$records = $obj2 -> retrieveRecordByJoin("LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType",$obj3,"LeaveType");
+		$records = $att_l -> retrieveRecordByJoin("LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType",$att_l_type,"LeaveType");
 		
 		foreach($records as $record)
 			$attObj -> leave_u_count[$record['LeaveName']] = $record['Count'];
@@ -101,12 +75,16 @@
 		
 	function getAllSubjectsAttendance($roll)
 	{
+	
+		require_once("../Models/Master/Master_Subject.php");
+		require_once("../Models/Master/Master_Student.php");
+		
 		$all_sub_att = array();
 		
-		$obj1 = new master_student();
-		$obj2 = new master_subject();
+		$m_stud = new master_student();
+		$m_sub = new master_subject();
 		
-		$records = $obj1 -> retrieveRecordByJoin("SubCode", "RollNo = $roll",null, $obj2, "Semester");
+		$records = $m_stud -> retrieveRecordByJoin("SubCode", "RollNo = $roll",null, $m_sub, "Semester");
 		
 		foreach($records as $record)
 			array_push($all_sub_att, getSubjectAttendance($roll, $record['SubCode']));
@@ -119,15 +97,15 @@
 	{
 		$sub_att = array();
 		
-		$obj1 = new Attendance_Leaves();
-		$obj2 = new Attendance_Leave_Type();
+		$att_l = new Attendance_Leaves();
+		$att_l_type = new Attendance_Leave_Type();
 		
 		$attObj = new AttendanceDetailed();
 		
 		if($strt_date && $end_date)
-			$records = $obj1->retrieveRecordByJoin("LeaveName, LeaveDate", "RollNo = '$roll' and SubCode = '$sub' and LeaveDate Between '$strt_date' and '$end_date'", "order by LeaveDate Desc ",$obj2, "LeaveType");
+			$records = $att_l->retrieveRecordByJoin("LeaveName, LeaveDate", "RollNo = '$roll' and SubCode = '$sub' and LeaveDate Between '$strt_date' and '$end_date'", "order by LeaveDate Desc ",$att_l_type, "LeaveType");
 		else
-			$records = $obj1->retrieveRecordByJoin("LeaveName, LeaveDate", "RollNo = $roll and SubCode = $sub", "order by LeaveDate Desc ",$obj2, "LeaveType");
+			$records = $att_l->retrieveRecordByJoin("LeaveName, LeaveDate", "RollNo = $roll and SubCode = $sub", "order by LeaveDate Desc ",$att_l_type, "LeaveType");
 		
 		$attObj -> roll_no = $roll;
 		$attObj -> sub_code = $sub;
@@ -140,38 +118,64 @@
 		return $sub_att;
 		
 	}
-       
-	function validateHeader($app)
+
+    function getLeaveUsedFromMax($roll)
+    {
+        $leaves = array();
+
+        $att_l_count = new Attendance_Leave_Count();
+        $att_l_type = new Attendance_Leave_Type();
+
+        $records = $att_l_count -> retrieveRecordByJoin(null, "RollNo = $roll", null, $att_l_type, "LeaveType");
+
+        $leaveObj = new LeaveUsedFromMax();
+
+        $leaveObj -> roll_no = $roll;
+
+        foreach($records as $record)
+        {
+            $leaveObj -> u_count[$record['LeaveName']] = $record['UsedCount'];
+            $leaveObj -> m_count[$record['LeaveName']] = $record['MaxLeaves'];
+        }
+
+        array_push($leaves, $leaveObj);
+
+        return $leaves;
+    }
+
+    function validateHeader($app)
 	{
+		require_once("../Models/API/API_Developer.php");
+		require_once("../Models/API/API_EndUser.php");
+		
 		$roll = $app->request->headers->get('RollNo');
-		$api_key = $app->request->headers->get('API_Key');
+		$api_key = $app->request->headers->get('APIKey');
 		$dev_id = $app->request->headers->get('DeveloperId');
 		
-		$obj = new Api_Developer();
+		$api_dev = new Api_Developer();
 		
-		$records1 = $obj -> retrieveRecord(null, "DeveloperId = '$dev_id'");
+		$records1 = $api_dev -> retrieveRecord(null, "DeveloperId = '$dev_id'");
 		
-		foreach($records1 as $record1)
+		if($records1)
 		{
-			if($record1['API_Key'] == $api_key)
+			foreach($records1 as $record1)
 			{
-				$obj = new Api_enduser();
-		
-				$records2 = $obj -> retrieveRecord(null, "UserId = '$roll'");
-				
-				foreach($records2 as $record2)
+				if($record1['API_Key'] == $api_key)
 				{
-					if($record2['UserId'] == $roll)
-					{
-						$date = new DateTime();
-						//$update_value['LastAccess'] = $date -> getTimestamp();
-						//$obj -> setData($update_value);
-						$obj -> updateRecord("LastAccess", "UserId = '$roll'");
-					}
-			    }
-		    }
-	    }
-    }
+					$api_end = new Api_EndUser();
+
+					$records2 = $api_end -> retrieveRecord(null, "UserId = '$roll'");
+
+					foreach($records2 as $record2)
+						if($record2['UserId'] == $roll)
+							$api_end -> updateRecord("LastAccess", "UserId = '$roll'");
+				}
+			}
+			return true;
+		}
+		
+		return false;
+	}
 	
 	require_once ("../Libs/Slim/Slim.php");
 
@@ -181,7 +185,7 @@
 	
 	$app -> get('/attendanceSummary/:subcode', function($sub) use($app)
 	{
-		//if(validateHeader($app))
+		if(validateHeader($app))
 		{
 			$roll = $app->request->headers->get('RollNo');
 			$app -> response() -> header('Content-Type', 'application/json');
@@ -192,7 +196,7 @@
 		
 	$app -> get('/attendanceSummary', function() use($app)
 	{
-		//if(validateHeader($app))
+		if(validateHeader($app))
 		{
 			$app -> response() -> header('Content-Type', 'application/json');
 			$roll = $app->request->headers->get('RollNo');
@@ -205,7 +209,7 @@
 	
 	$app -> get('/attendanceDetailed/:subcode/:start_date/:end_date', function($sub, $strt_date, $end_date) use($app)
 	{
-        //if(validateHeader($app))
+        if(validateHeader($app))
         {
             $app -> response() -> header('Content-Type', 'application/json');
             $roll = $app->request->headers->get('RollNo');
@@ -216,7 +220,7 @@
 	
 	$app -> get('/attendanceDetailed/:subcode', function($sub) use($app)
 	{
-		//if(validateHeader($app))
+		if(validateHeader($app))
         {
             $app -> response() -> header('Content-Type', 'application/json');
             $roll = $app->request->headers->get('RollNo');
