@@ -60,23 +60,27 @@
 			$attObj -> sub_code = $record['SubCode'];
 			$attObj -> p_count = $record['PresentCount'];
 			$attObj -> a_count = $record['AbsentCount'];
+            //array_push($attObj -> leave_names, " ");
+            //array_push($attObj -> used_count, " ");
 		}
 		
 		$att_l = new Attendance_Leaves();
 		$att_l_type = new Attendance_Leave_Type();
-		$tablename = $att_l_type -> tablename();
-		
+		$tablename = $att_l_type -> Tablename();
+
 		$records = $att_l -> retrieveRecordByJoin("LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType",$att_l_type,"LeaveType");
 		
 		foreach($records as $record)
         {
+            //array_pop($attObj -> leave_names);
+            //array_pop($attObj -> used_count);
             array_push($attObj -> leave_names, $record['LeaveName']);
             array_push($attObj -> used_count, $record['Count']);
         }
 		
-		array_push($sub_att, $attObj);		
+		//array_push($sub_att, $attObj);
 		
-		return $sub_att;
+		return $attObj;
     }
 		
 	function getAllSubjectsAttendance($roll)
@@ -216,7 +220,7 @@
 			$roll = $app->request->headers->get('RollNo');
 			$sub_att = getAllSubjectsAttendance($roll);
 			$leaves = getLeaveUsedFromMax($roll);
-			array_push($sub_att, $leaves);
+			//array_push($sub_att, $leaves);
 			echo json_encode($sub_att);
 		}
 	});
