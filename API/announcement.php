@@ -8,8 +8,10 @@
         public $time;
         public $categoryName;
         public $categoryId;
-        public $tags = array();
-        public $categories = array();
+        public $tagIDs = array();
+        public $tagNames = array();
+        public $categoryIDs = array();
+        public $categoryNames = array();
     }
 
     function getAnnouncements($roll, $strt_date, $strt_time ,$n_items)
@@ -49,13 +51,19 @@
 
             $records3 = $ann_tag -> retrieveRecordByJoin("TagName, Announcement_Tag.TagId", "Announcement_Tag.TagId in ".$ann_map_tag -> getRetrieveByJoinQuery("TagId", "Announcement_Map_All_Tag.AnnouncementId in".$ann_all->getRetrieveByJoinQuery("Announcement_All.AnnouncementId","Date <= '$strt_date' AND Time <= '$strt_time' AND Announcement_All.AnnouncementId IN".$ann_map_grp->getRetrieveByJoinQuery("AnnouncementId","MembRollNo = '$roll'",null,$ann_grp_stat,"GroupId"),null,$ann_map_grp,"AnnouncementId"), null, $ann_all, "AnnouncementId"), " limit 0, $n_items", $ann_map_tag, "TagId");
             foreach($records3 as $record3)
-                $annObj -> tags[$record3['TagName']] = $record3['TagId'];
+            {
+                array_push($annObj -> tagIDs, $record3['TagId']);
+                array_push($annObj -> tagNames, $record3['TagName']);
+            }
 
             $categories = new Announcement_Category();
             $records = $categories -> retrieveRecord();
 
             foreach($records as $record)
-                $annObj -> cat[$record['CategoryName']] = $record['CategoryId'];
+            {
+                array_push($annObj -> categoryIDs, $record['CategoryId']);
+                array_push($annObj -> categoryNames, $record['CategoryName']);
+            }
 
             array_push($allAnn,$annObj);
         }
@@ -101,13 +109,19 @@
 
             $records3 = $ann_tag -> retrieveRecordByJoin("TagName, Announcement_Tag.TagId", "Announcement_Tag.TagId in ".$ann_map_tag -> getRetrieveByJoinQuery("TagId", "Announcement_Map_All_Tag.AnnouncementId in".$ann_all->getRetrieveByJoinQuery("Announcement_All.AnnouncementId"," Announcement_All.AnnouncementId IN".$ann_map_grp->getRetrieveByJoinQuery("AnnouncementId","MembRollNo='$roll'",null,$ann_grp_stat,"GroupId"),null,$ann_map_grp,"AnnouncementId"), null, $ann_all, "AnnouncementId"), " limit 0, $n_items", $ann_map_tag, "TagId");
             foreach($records3 as $record3)
-                $annObj -> tags[$record3['TagName']] = $record3['TagId'];
+            {
+                array_push($annObj -> tagIDs, $record3['TagId']);
+                array_push($annObj -> tagNames, $record3['TagName']);
+            }
 
             $categories = new Announcement_Category();
             $records = $categories -> retrieveRecord();
 
             foreach($records as $record)
-                $annObj -> cat[$record['CategoryName']] = $record['CategoryId'];
+            {
+                array_push($annObj -> categoryIDs, $record['CategoryId']);
+                array_push($annObj -> categoryNames, $record['CategoryName']);
+            }
 
             array_push($allAnn,$annObj);
         }
@@ -153,13 +167,19 @@
 
             $records3 = $ann_tag -> retrieveRecordByJoin("TagName, Announcement_Tag.TagId", "Announcement_Tag.TagId in ".$ann_map_tag -> getRetrieveByJoinQuery("TagId", "Announcement_Map_All_Tag.AnnouncementId in".$ann_all->getRetrieveByJoinQuery("Announcement_All.AnnouncementId"," Announcement_All.AnnouncementId IN".$ann_map_grp->getRetrieveByJoinQuery("AnnouncementId","MembRollNo='$roll'",null,$ann_grp_stat,"GroupId"),null,$ann_map_grp,"AnnouncementId"), null, $ann_all, "AnnouncementId"), null, $ann_map_tag, "TagId");
             foreach($records3 as $record3)
-                $annObj -> tags[$record3['TagName']] = $record3['TagId'];
+            {
+                array_push($annObj -> tagIDs, $record3['TagId']);
+                array_push($annObj -> tagNames, $record3['TagName']);
+            }
 
             $categories = new Announcement_Category();
             $records = $categories -> retrieveRecord();
 
             foreach($records as $record)
-                $annObj -> cat[$record['CategoryName']] = $record['CategoryId'];
+            {
+                array_push($annObj -> categoryIDs, $record['CategoryId']);
+                array_push($annObj -> categoryNames, $record['CategoryName']);
+            }
 
             array_push($allAnn,$annObj);
         }
@@ -199,7 +219,10 @@
             $records = $categories -> retrieveRecord();
 
             foreach($records as $record)
-                $annObj -> cat[$record['CategoryName']] = $record['CategoryId'];
+            {
+                array_push($annObj -> categoryIDs, $record['CategoryId']);
+                array_push($annObj -> categoryNames, $record['CategoryName']);
+            }
 
             array_push($allAnn,$annObj);
         }
@@ -237,7 +260,10 @@
             $records = $categories -> retrieveRecord();
 
             foreach($records as $record)
-                $annObj -> cat[$record['CategoryName']] = $record['CategoryId'];
+            {
+                array_push($annObj -> categoryIDs, $record['CategoryId']);
+                array_push($annObj -> categoryNames, $record['CategoryName']);
+            }
 
             array_push($allAnn,$annObj);
         }
@@ -294,13 +320,19 @@
 
             $records3 = $ann_tag -> retrieveRecordByJoin("TagName, Announcement_Tag.TagId", "Announcement_Tag.TagId in ".$ann_map_tag -> getRetrieveByJoinQuery("TagId", "Announcement_Map_All_Tag.AnnouncementId in".$ann_all->getRetrieveByJoinQuery("Announcement_All.AnnouncementId","Announcement_All.AnnouncementId IN".$ann_map_grp->getRetrieveByJoinQuery("AnnouncementId","MembRollNo='$roll'",null,$ann_grp_stat,"GroupId"),null,$ann_map_grp,"AnnouncementId"), null, $ann_all, "AnnouncementId"), null, $ann_map_tag, "TagId");
             foreach($records3 as $record3)
-                $annObj -> tags[$record3['TagName']] = $record3['TagId'];
+            {
+                array_push($annObj -> tagIDs, $record3['TagId']);
+                array_push($annObj -> tagNames, $record3['TagName']);
+            }
 
             $categories = new Announcement_Category();
             $records = $categories -> retrieveRecord();
 
             foreach($records as $record)
-                $annObj -> cat[$record['CategoryName']] = $record['CategoryId'];
+            {
+                array_push($annObj -> categoryIDs, $record['CategoryId']);
+                array_push($annObj -> categoryNames, $record['CategoryName']);
+            }
 
             array_push($allAnn,$annObj);
         }

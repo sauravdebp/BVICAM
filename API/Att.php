@@ -15,21 +15,24 @@
 		public $sub_name;
         public $p_count;					// present count
         public $a_count;					// absent count
-		public $leave_u_count = array();	// leave used count		
+		public $leave_names = array();
+        public $used_count = array();
     }
 
 	class AttendanceDetailed
 	{
 		public $roll_no;
 		public $sub_code;
-		public $leaves = array();
+		public $leave_dates = array();
+        public $leave_names = array();
 	}
 	
 	class LeaveUsedFromMax
 	{
 		public $roll_no;
-		public $u_count = array();			// Used count
-		public $m_count = array();			// Max count
+        public $leave_names = array();
+		public $used_count = array();			// Used count
+		public $max_count = array();			// Max count
 	}
 	
 
@@ -66,7 +69,10 @@
 		$records = $att_l -> retrieveRecordByJoin("LeaveName, count(*) as Count", "RollNo = $roll and SubCode = $sub", "group by $tablename.LeaveType",$att_l_type,"LeaveType");
 		
 		foreach($records as $record)
-			$attObj -> leave_u_count[$record['LeaveName']] = $record['Count'];
+        {
+            array_push($attObj -> leave_names, $record['LeaveName']);
+            array_push($attObj -> used_count, $record['Count']);
+        }
 		
 		array_push($sub_att, $attObj);		
 		
@@ -111,7 +117,10 @@
 		$attObj -> sub_code = $sub;
 		
 		foreach($records as $record)
-			$attObj -> leaves[$record['LeaveDate']] = $record['LeaveName'];
+        {
+            array_push($attObj -> leave_dates, $record['LeaveDate']);
+            array_push($attObj -> leave_names, $record['LeaveName']);
+        }
 			
 		array_push($sub_att, $attObj);
 		
@@ -134,8 +143,9 @@
 
         foreach($records as $record)
         {
-            $leaveObj -> u_count[$record['LeaveName']] = $record['UsedCount'];
-            $leaveObj -> m_count[$record['LeaveName']] = $record['MaxLeaves'];
+            array_push($leaveObj -> leave_names, $record['LeaveName']);
+            array_push($leaveObj -> used_count, $record['UsedCount']);
+            array_push($leaveObj -> max_count, $record['MaxLeaves']);
         }
 
         array_push($leaves, $leaveObj);
