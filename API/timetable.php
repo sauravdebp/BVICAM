@@ -12,9 +12,8 @@ class TimeTable
     public $day;
     public $startTime;
     public $endTime;
-    public $date;
-
-}
+    public $subname;
+ }
 
 function returnDate($day)
 {
@@ -57,30 +56,36 @@ function showTimeTable($roll)
     $obj3=new Timetable_Permanent();
     $obj4=new Timetable_Temporary();
 
-
+    $roll=1;
 
     $recordsPermanent=$obj3->retrieveRecordByJoin(null,"Master_Subject.subCode IN".$obj2->getRetrieveByJoinQuery("SubCode","RollNo=$roll",null,$obj1,"Semester"),null,$obj2,"SubCode");
     $recordsTemporary=$obj4->retrieveRecordByJoin(null,"Master_Subject.subCode IN".$obj2->getRetrieveByJoinQuery("SubCode","RollNo=$roll",null,$obj1,"Semester"),null,$obj2,"SubCode");
 
     foreach ($recordsPermanent as $recordPermanent) {
             $tobj = new TimeTable();
-            $tobj->subcode = $recordPermanent['SubCode'];
+            $subCode=$tobj->subcode = $recordPermanent['SubCode'];
             $tobj->startTime = $recordPermanent['StartTime'];
             $tobj->endTime = $recordPermanent['EndTime'];
             $tobj->day = $recordPermanent['Day'];
+            $obj2->retrieveRecordByJoin("SubName","RollNo=$roll AND SubCode=$subCode",null,$obj1,"Semester");
+
+            $tobj->subname=$recordPermanent['SubName'];
             foreach ($recordsTemporary as $recordTemporary) {
                 $t = new TimeTable();
-                $t->date = $recordTemporary['Date'];
-                $t->subcode = $recordTemporary['SubCode'];
+                $date = $recordTemporary['Date'];
+                $subCode=$t->subcode = $recordTemporary['SubCode'];
                 $t->startTime = $recordTemporary['StartTime'];
                 $t->endTime = $recordTemporary['EndTime'];
-                $dt = new DateTime($t->date);
+                $obj2->retrieveRecordByJoin("SubName","RollNo=$roll AND SubCode=$subCode",null,$obj1,"Semester");
+                $t->subname=$recordTemporary['SubName'];
+                $dt = new DateTime($date);
                 $d = returnDate($dt->format('l'));
             if($tobj->day == $d && $tobj->startTime==$t->startTime && $tobj->endTime==$t->endTime)
             {
                 $tobj->subcode = $t->subcode;
                 $tobj->startTime = $t->startTime;
                 $tobj->endTime = $t->endTime;
+                $tobj->subname=$t->subname;
             }
 
         }
