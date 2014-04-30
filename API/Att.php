@@ -144,38 +144,42 @@
     }
 
     function validateHeader($app)
-	{
-		require_once("../Models/API/API_Developer.php");
-		require_once("../Models/API/API_EndUser.php");
-		
-		$roll = $app->request->headers->get('RollNo');
-		$api_key = $app->request->headers->get('APIKey');
-		$dev_id = $app->request->headers->get('DeveloperId');
-		
-		$api_dev = new Api_Developer();
-		
-		$records1 = $api_dev -> retrieveRecord(null, "DeveloperId = '$dev_id'");
-		
-		if($records1)
-		{
-			foreach($records1 as $record1)
-			{
-				if($record1['API_Key'] == $api_key)
-				{
-					$api_end = new Api_EndUser();
+    {
+        require_once("../Models/API/API_Developer.php");
+        require_once("../Models/API/API_EndUser.php");
 
-					$records2 = $api_end -> retrieveRecord(null, "UserId = '$roll'");
+        $roll = $app->request->headers->get('RollNo');
+        $api_key = $app->request->headers->get('APIKey');
+        $dev_id = $app->request->headers->get('DeveloperId');
 
-					foreach($records2 as $record2)
-						if($record2['UserId'] == $roll)
-							$api_end -> updateRecord("LastAccess", "UserId = '$roll'");
-				}
-			}
-			return true;
-		}
-		
-		return false;
-	}
+        $api_dev = new Api_Developer();
+
+        $records1 = $api_dev -> retrieveRecord(null, "DeveloperId = '$dev_id'");
+
+        $last_access = null;
+
+        if($records1)
+        {
+            foreach($records1 as $record1)
+            {
+                if($record1['API_Key'] == $api_key)
+                {
+                    $api_end = new Api_EndUser();
+
+                    $records2 = $api_end -> retrieveRecord(null, "UserId = '$roll'");
+
+                    foreach($records2 as $record2)
+                        if($record2['UserId'] == $roll)
+                        {
+                            $last_access = $record2['LastAccess'];
+                            $api_end -> updateRecord("LastAccess", "UserId = '$roll'");
+                        }
+                }
+            }
+        }
+
+        return $last_access;
+    }
 	
 	require_once ("../Libs/Slim/Slim.php");
 
